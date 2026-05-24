@@ -48,7 +48,9 @@ const Hero = () => {
             width={514}
             height={393}
             className="h-auto w-[220px] sm:w-[320px] lg:w-[514px]"
-            priority
+            loading="eager"
+            fetchPriority="high"
+            sizes="(max-width: 639px) 220px, (max-width: 1023px) 320px, 514px"
           />
           <p className="max-w-[800px] text-lg leading-8 font-bold sm:text-xl lg:text-[28px] lg:leading-[32px]">
             Welcome to A Space to Grow Together.
