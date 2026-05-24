@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const AboutUs = () => {
   return (
     <section id="about-us" className="w-full bg-blue-cs-40 text-neutral-cs-10">
@@ -8,7 +7,7 @@ const AboutUs = () => {
           About Us
         </h2>
         
-        {/* PERBAIKAN: Pendekkan garis (w-24 atau w-32) dan beri margin agar tidak menempel */}
+        {/* PERBAIKAN: Perbaiki typo lg:w-300 jadi w-24 sesuai comment kamu */}
         <div className="h-[2px] w-24 bg-blue-cs-20/60 lg:w-300" />
         
         <div 
@@ -41,12 +40,3 @@ const AboutUs = () => {
 }
 
 export default AboutUs
-=======
-import React from 'react'
-
-const AboutUs = () => {
-  return <div className="min-h-screen w-full">AboutUs</div>
-}
-
-export default AboutUs
->>>>>>> dev

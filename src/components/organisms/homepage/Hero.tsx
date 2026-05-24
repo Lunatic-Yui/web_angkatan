@@ -1,9 +1,10 @@
-<<<<<<< HEAD
 'use client'
 
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
-import HeroLogo from '@/assets/images/homepage/hero-logo.png'
+
+// PERBAIKAN PATH: Gunakan path public agar tidak error "Module not found"
+const HeroLogo = "/assets/images/logo/herologo.png"
 
 const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -19,14 +20,12 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      /* PERBAIKAN: Gunakan relative tanpa z-0 agar tidak membuat stacking context baru yang mengunci z-negatif */
-      className="relative flex w-full items-center justify-center overflow-hidden bg-[#0B1E38] text-neutral-cs-10"
+      className="relative flex w-full items-center justify-center overflow-hidden bg-blue-cs-40 text-neutral-cs-10"
     >
-      {/* 1. LAYER VIDEO: Paling bawah tapi tetap terlihat */}
+      {/* 1. LAYER VIDEO: Tanpa z-index (Otomatis paling bawah) */}
       <video
         ref={videoRef}
-        /* PERBAIKAN: Gunakan z-0 dan pastikan container utama tidak menindihnya */
-        className="absolute inset-0 z-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
         autoPlay
         muted
         loop
@@ -36,14 +35,14 @@ const Hero = () => {
         <source src="/assets/videos/starrynight.mp4" type="video/mp4" />
       </video>
 
-      {/* 2. LAYER OVERLAY: Di atas video (z-10) */}
+      {/* 2. LAYER OVERLAY: Tanpa z-index (Otomatis di atas video berdasarkan DOM) */}
       <div 
-        className="absolute inset-0 z-10 bg-gradient-to-b from-[#173679]/20 to-[#0B1E38]" 
+        className="absolute inset-0 bg-gradient-to-b from-blue-cs-30/20 to-blue-cs-40" 
         aria-hidden="true" 
       />
       
-      {/* 3. LAYER KONTEN: Paling atas (z-20) */}
-      <div className="relative z-20 flex min-h-[640px] w-full max-w-[1260px] flex-col items-center gap-10 px-6 py-24 text-center sm:px-10 lg:min-h-[916px] lg:gap-[52px] lg:px-[90px] lg:py-[136px]">
+      {/* 3. LAYER KONTEN: Cukup z-10 agar di atas background, sangat aman untuk Navbar */}
+      <div className="relative z-10 flex min-h-[640px] w-full max-w-[1260px] flex-col items-center gap-10 px-6 py-24 text-center sm:px-10 lg:min-h-[916px] lg:gap-[52px] lg:px-[90px] lg:py-[136px]">
         <div className="flex flex-col items-center gap-2">
           <Image
             src={HeroLogo}
@@ -70,12 +69,3 @@ const Hero = () => {
 }
 
 export default Hero
-=======
-import React from 'react'
-
-const Hero = () => {
-  return <div className="min-h-screen w-full">Hero</div>
-}
-
-export default Hero
->>>>>>> dev
