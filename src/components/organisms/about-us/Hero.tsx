@@ -9,7 +9,7 @@ const Hero = () => {
   return (
     <section
       id="about-hero"
-      className="text-neutral-cs-10 relative flex min-h-[50vh] w-full flex-col items-center justify-end text-center lg:px-[90px]"
+      className="text-neutral-cs-10 relative flex w-full flex-col items-center justify-center pt-40 text-center md:pt-64 lg:px-[90px]"
     >
       {/* {TITLE} */}
       <div className="relative inline-block w-full max-w-[325px] sm:max-w-[500px] lg:max-w-[890px]">
