@@ -1,6 +1,10 @@
+'use client'
+
 import SendBlack from '../atoms/icon/SendBlack'
 import Mail from '../atoms/icon/Mail'
 import CalendarClock from '../atoms/icon/CalendarClock'
+
+import type { MenfessReactionName } from '@/types/menfess'
 
 export interface MenfessCardProps {
   id: number | string
@@ -14,9 +18,10 @@ export interface MenfessCardProps {
     sad: number
     angry: number
   }
+  onReactionClick?: (id: number | string, reaction: MenfessReactionName) => void | Promise<void>
 }
 
-const MenfessCard = ({ from, to, message, timestamp, reactions }: MenfessCardProps) => {
+const MenfessCard = ({ id, from, to, message, timestamp, reactions, onReactionClick }: MenfessCardProps) => {
   return (
     <div className="bg-[#0B1E38]/75 border border-white rounded-xl p-5 flex flex-col h-[400px] text-white">
       
@@ -62,16 +67,16 @@ const MenfessCard = ({ from, to, message, timestamp, reactions }: MenfessCardPro
         
         {/* Reactions (Menggunakan emoji standar untuk mempermudah, bisa diganti icon SVG) */}
         <div className="flex gap-2 w-full justify-center sm:w-auto sm:justify-start">
-          <button className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
+          <button type="button" onClick={() => onReactionClick?.(id, 'laugh')} className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
             😆 <span>{reactions.laugh}</span>
           </button>
-          <button className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
+          <button type="button" onClick={() => onReactionClick?.(id, 'love')} className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
             😍 <span>{reactions.love}</span>
           </button>
-          <button className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
+          <button type="button" onClick={() => onReactionClick?.(id, 'sad')} className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
             😢 <span>{reactions.sad}</span>
           </button>
-          <button className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
+          <button type="button" onClick={() => onReactionClick?.(id, 'angry')} className="flex items-center gap-1.5 border border-white/30 rounded-md px-3 py-1 text-md hover:bg-white/10 transition cursor-pointer">
             😡 <span>{reactions.angry}</span>
           </button>
         </div>

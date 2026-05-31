@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
-import { getMenfessListAction } from '@/actions/menfess'
+import { getMenfessListAction, updateMenfessReactionAction } from '@/actions/menfess'
 
 import MenfessCard from '../../molecules/MenfessCard'
-import type { MenfessRecord } from '@/types/menfess'
+import type { MenfessRecord, MenfessReactionName } from '@/types/menfess'
 
 const ITEMS_PER_PAGE = 6
 
@@ -53,6 +53,7 @@ const Menfess = () => {
   const [items, setItems] = useState<MenfessRecord[]>([])
   const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [updatingReactionId, setUpdatingReactionId] = useState<string | null>(null)
 
   useEffect(() => {
     const loadMenfess = async () => {
@@ -82,6 +83,51 @@ const Menfess = () => {
 
     loadMenfess()
   }, [currentPage])
+
+  const handleReactionClick = async (
+    id: string | number,
+    reaction: MenfessReactionName
+  ) => {
+    const targetId = String(id)
+
+    setUpdatingReactionId(targetId)
+    setItems((previousItems) =>
+      previousItems.map((item) =>
+        item.id === targetId
+          ? {
+              ...item,
+              [reaction]: item[reaction] + 1
+            }
+          : item
+      )
+    )
+
+    const result = await updateMenfessReactionAction({
+      id: targetId,
+      reaction
+    })
+
+    if (result.success && result.data) {
+      setItems((previousItems) =>
+        previousItems.map((item) =>
+          item.id === targetId ? result.data! : item
+        )
+      )
+    } else {
+      setItems((previousItems) =>
+        previousItems.map((item) =>
+          item.id === targetId
+            ? {
+                ...item,
+                [reaction]: Math.max(0, item[reaction] - 1)
+              }
+            : item
+        )
+      )
+    }
+
+    setUpdatingReactionId(null)
+  }
 
   return (
     <section 
@@ -119,11 +165,14 @@ const Menfess = () => {
                 to={data.to ?? '-'}
                 message={data.message}
                 timestamp={new Date(data.created_at).toLocaleString()}
+                onReactionClick={
+                  updatingReactionId === data.id ? undefined : handleReactionClick
+                }
                 reactions={{
-                  laugh: 0,
-                  love: 0,
-                  sad: 0,
-                  angry: 0
+                  laugh: data.laugh ?? 0,
+                  love: data.love ?? 0,
+                  sad: data.sad ?? 0,
+                  angry: data.angry ?? 0
                 }}
               />
             ))

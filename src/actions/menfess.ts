@@ -3,11 +3,12 @@
 import { ZodError } from 'zod'
 
 import { menfessPayloadSchema, normalizeMenfessPayload, type MenfessPayloadInput } from '@/lib/menfess/schema'
-import { createSupabaseAnonymousClient } from '@/lib/supabase/server'
+import { createSupabaseAnonymousClient, createSupabaseServiceRoleClient } from '@/lib/supabase/server'
 import type { ActionResult, MenfessListData, MenfessRecord } from '@/types/menfess'
+import type { MenfessReactionName } from '@/types/menfess'
 import { revalidatePath } from 'next/cache'
 
-const MENFESS_SELECT_FIELDS = 'id,message,from,to,created_at' as const
+const MENFESS_SELECT_FIELDS = 'id,message,from,to,created_at,laugh,love,sad,angry' as const
 const DEFAULT_PAGE = 1
 const DEFAULT_LIMIT = 10
 const MAX_LIMIT = 50
@@ -15,6 +16,11 @@ const MAX_LIMIT = 50
 type GetMenfessListActionParams = {
   page?: number
   limit?: number
+}
+
+type UpdateMenfessReactionActionParams = {
+  id: string
+  reaction: MenfessReactionName
 }
 
 const sanitizePage = (value?: number) => {
@@ -35,6 +41,14 @@ const sanitizeLimit = (value?: number) => {
 
 const getValidationErrorMessage = (error: ZodError) =>
   error.issues.map((issue) => issue.message).join(', ')
+
+const normalizeMenfessRecord = (item: MenfessRecord): MenfessRecord => ({
+  ...item,
+  laugh: item.laugh ?? 0,
+  love: item.love ?? 0,
+  sad: item.sad ?? 0,
+  angry: item.angry ?? 0
+})
 
 export async function createMenfessAction(
   input: MenfessPayloadInput
@@ -123,7 +137,7 @@ export async function getMenfessListAction(
       success: true,
       message: 'Menfess messages fetched successfully.',
       data: {
-        items: data ?? [],
+        items: (data ?? []).map(normalizeMenfessRecord),
         page,
         limit,
         total,
@@ -134,6 +148,77 @@ export async function getMenfessListAction(
     return {
       success: false,
       message: 'An unexpected error occurred while fetching menfess.',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
+export async function updateMenfessReactionAction(
+  params: UpdateMenfessReactionActionParams
+): Promise<ActionResult<MenfessRecord>> {
+  try {
+    const supabase = createSupabaseServiceRoleClient()
+
+    const { data: current, error: fetchError } = await supabase
+      .from('menfess')
+      .select(MENFESS_SELECT_FIELDS)
+      .eq('id', params.id)
+      .single()
+
+    if (fetchError) {
+      return {
+        success: false,
+        message: 'Failed to load menfess reaction state.',
+        error: fetchError.message
+      }
+    }
+
+    if (!current) {
+      return {
+        success: false,
+        message: 'Menfess message not found.',
+        error: 'No row was returned from Supabase.'
+      }
+    }
+
+    const nextReactionCount = (current[params.reaction] ?? 0) + 1
+
+    const { data, error } = await supabase
+      .from('menfess')
+      .update({
+        [params.reaction]: nextReactionCount
+      })
+      .eq('id', params.id)
+      .select(MENFESS_SELECT_FIELDS)
+      .single()
+
+    if (error) {
+      return {
+        success: false,
+        message: 'Failed to update menfess reaction.',
+        error: error.message
+      }
+    }
+
+    if (!data) {
+      return {
+        success: false,
+        message: 'Menfess reaction was not returned after update.',
+        error: 'No row was returned from Supabase.'
+      }
+    }
+
+    revalidatePath('/fun-corners')
+
+    return {
+      success: true,
+      message: 'Menfess reaction updated successfully.',
+      data: normalizeMenfessRecord(data)
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: 'An unexpected error occurred while updating menfess reaction.',
       error: error instanceof Error ? error.message : 'Unknown error'
     }
   }
