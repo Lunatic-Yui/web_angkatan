@@ -258,7 +258,7 @@ const handleTextClick = () => {
 ">
             {/* UBAH HOBI KAMU */}
             <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">Hobi</p>
-            <p className="mt-2">nyoba hal baru apapun itu </p>
+            <p className="mt-2">nyoba hal baru apapun itu.</p>
           </div>
           <div className="
   rounded-xl
