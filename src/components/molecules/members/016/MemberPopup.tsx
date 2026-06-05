@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
@@ -50,7 +51,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity"
       />
 
-      <div className="border-neutral-800 bg-neutral-950 relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-[640px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-2xl border p-6 text-neutral-100 shadow-2xl shadow-black/50 sm:max-h-[calc(100vh-10rem)] sm:p-8">
+      <div className="border-neutral-800 bg-neutral-950 relative z-10 max-h-[100dvh] w-full max-w-[640px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-2xl border p-6 text-neutral-100 shadow-2xl shadow-black/50 sm:p-8">
         <button
           type="button"
           aria-label="Close member detail"
@@ -100,7 +101,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/0LgZadzsnpOYzCFD22FhqW?si=a43b923a93714c13" />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
