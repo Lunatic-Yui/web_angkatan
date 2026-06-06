@@ -160,7 +160,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       </div>
 
       <div className="rounded-full border-[3px] border-white bg-[#d7e8ff] p-3 shadow-[0_0_20px_rgba(180,210,255,.5)]">
-        <LinkedInButtonLink username="FerlinErdina" />
+        <LinkedInButtonLink username="ferlin-erdina-264652379" />
       </div>
 
     </div>
