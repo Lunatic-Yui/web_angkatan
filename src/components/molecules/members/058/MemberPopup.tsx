@@ -83,15 +83,17 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             {/* UBAH HOBI KAMU */}
             <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">Hobi</p>
             <ol className="mt-2 list-decimal list-inside space-y-1">
-              <li>Loving ma husband ♡</li>
-              <li>Reading novels</li>
-              <li>Listening to songs</li>
-              <li>Painting n Drawing</li>
+              <li>Loving ma Husband ♡</li>
+              <li>CATS</li>
+              <li>Reading n Painting</li>
+              <li>Blasting songs 24/7</li>
+              <li>Learn new languages</li>
+            </ol> 
           </div>
           <div className="border-neutral-cs-10/40 rounded-xl border p-4">
             {/* UBAH FUNFACT KAMU */}
             <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">Fun Fact</p>
-            <p className="mt-2">Want to be a Firefighter</p>
+            <p className="mt-2">Wanted to be a Firefighter</p>
           </div>
         </div>
 
@@ -99,10 +101,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           {/* UBAH LAGU FAVORIT KAMU */}
           <p className="text-neutral-cs-10/60 text-xs font-bold tracking-wide uppercase">Lagu Favorit</p>
 
-          <p className="my-2 text-sm font-semibold">Alien</p>
+          {/*<p className="my-2 text-sm font-semibold">Alien</p>*/}
           <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/3czfvJgfEDfBT5OKA5qAU5?si=673ccc70ea4141c0" />
 
-          <p className="my-2 text-sm font-semibold">sTraNgeRs</p>
+          {/*<p className="my-2 text-sm font-semibold">sTraNgeRs</p>*/}
           <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/5fpq1wF8xa5tSSlcKHdmGQ?si=f0a404fc7b534c9f" />
 
 
