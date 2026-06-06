@@ -51,10 +51,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   }
 
   if (!passed) {
-    return createPortal(
-      <TetrisGate onSuccess={() => setPassed(true)} onClose={onClose} />,
-      document.body
-    );
+    return createPortal(<TetrisGate onSuccess={() => setPassed(true)} onClose={handleClose} />, document.body)
   }
 
   return createPortal(
@@ -64,7 +61,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       <button
         type="button"
         aria-label="Close member detail"
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute inset-0 z-0 bg-[#080B1A]/80 backdrop-blur-sm"
       />
 
@@ -117,7 +114,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         <button
           type="button"
           aria-label="Close member detail"
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-xl leading-none text-white/50 hover:bg-white/10"
         >
           x
@@ -165,7 +162,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           <div className="rounded-xl border border-white/[0.07] p-4" style={{ background: 'rgba(255,255,255,0.04)' }}>
             <p className="popup-font-sans text-xs font-medium tracking-widest uppercase text-[#9690DC]/70">Fun Fact</p>
             <p className="popup-font-sans mt-2 text-sm font-light neon-glow-turu text-[#DCD7FF]/85 leading-relaxed">
-              BHAAP APA YH, currently "bhap-bhap" hehe<br />
+              BHAAP APA YH, currently &quot;bhap-bhap&quot; hehe
+              <br />
               - cinta kopsus tetangga tuku<br />
               - cinta kopsus kluarga famima<br />
               - cinta caramel macchiato point<br />

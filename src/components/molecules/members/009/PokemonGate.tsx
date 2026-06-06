@@ -123,16 +123,22 @@ const PokemonGate = ({ onClose, onSuccess }: PokemonGateProps) => {
   }
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center overflow-y-auto px-4 py-6">
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,#ef4444dd_0%,#fef3c7dd_46%,#3b82f6dd_100%)] backdrop-blur-md" />
+    <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-hidden px-4">
+      <button
+        type="button"
+        aria-label="Close Pokemon gate"
+        onClick={onClose}
+        className="absolute inset-0 bg-[linear-gradient(135deg,#ef4444dd_0%,#fef3c7dd_46%,#3b82f6dd_100%)] backdrop-blur-md"
+      />
 
-      <div
-        className={
-          introDone
-            ? 'relative z-10 flex w-full max-w-[680px] flex-col items-center rounded-[28px] border-4 border-slate-950 bg-[linear-gradient(180deg,#ef4444_0_88px,#111827_88px_100px,#f8fafc_100px_100%)] p-5 text-center text-slate-950 shadow-[0_24px_70px_rgba(15,23,42,0.45)] sm:p-8'
-            : 'relative z-10 flex w-full max-w-[680px] flex-col items-center text-center text-slate-950'
-        }
-      >
+      <div className="relative z-10 h-[100dvh] max-h-[100dvh] w-full max-w-[680px] overflow-y-auto">
+        <div
+          className={
+            introDone
+              ? 'relative flex min-h-[100dvh] w-full flex-col items-center border-x-4 border-slate-950 bg-[linear-gradient(180deg,#ef4444_0_88px,#111827_88px_100px,#f8fafc_100px_100%)] p-5 text-center text-slate-950 shadow-[0_24px_70px_rgba(15,23,42,0.45)] sm:p-8'
+              : 'relative flex min-h-[100dvh] w-full flex-col items-center justify-center text-center text-slate-950'
+          }
+        >
         {introDone && (
           <button
             type="button"
@@ -195,7 +201,6 @@ const PokemonGate = ({ onClose, onSuccess }: PokemonGateProps) => {
                 onChange={() => {}}
                 className="w-full rounded-2xl border-4 border-slate-950 bg-white px-5 py-3 text-center text-2xl font-black tracking-[0.2em] text-slate-950 caret-transparent shadow-[0_6px_0_#111827] transition outline-none focus:-translate-y-0.5 focus:shadow-[0_8px_0_#111827]"
                 autoComplete="off"
-                autoFocus
               />
               <p className="min-h-5 text-sm font-bold text-slate-700">{message}</p>
               <button
@@ -207,6 +212,7 @@ const PokemonGate = ({ onClose, onSuccess }: PokemonGateProps) => {
             </form>
           </>
         )}
+      </div>
       </div>
     </div>
   )
