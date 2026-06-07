@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
+import { createPortal } from 'react-dom'
+
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
@@ -75,7 +77,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         type="button"
         aria-label="Close member detail"
         onClick={onClose}
-        className="absolute inset-0 bg-black/95 backdrop-blur-md"
+        className="fixed inset-0 bg-black/95 backdrop-blur-md"
       />
 
       {/* Tombol Close Global */}
@@ -176,7 +178,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             <div className="absolute left-6 top-6 text-center font-serif text-4xl font-bold text-red-700/90 drop-shadow-[0_0_6px_rgba(153,27,27,0.5)]">
               D<br/><span className="text-4xl text-neutral-500">☠</span>
             </div>
-            
+
             <div className="flex flex-col items-center gap-6 opacity-90">
               <span className="text-8xl text-red-800/60 drop-shadow-[0_0_20px_rgba(153,27,27,0.8)]">☠</span>
               <h1 className="font-serif text-5xl font-black tracking-[0.5em] ml-[0.5em] text-neutral-500 drop-shadow-[0_0_10px_rgba(255,255,255,0.15)]">
@@ -184,27 +186,28 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               </h1>
             </div>
 
-            <div className="absolute bottom-6 right-6 rotate-180 text-center font-serif text-4xl font-bold text-red-800/90 drop-shadow-[0_0_6px_rgba(153,27,27,0.5)]">
-              D<br/><span className="text-3xl text-neutral-600">☠</span>
+            <div className="absolute right-6 bottom-6 rotate-180 text-center font-serif text-4xl font-bold text-red-800/90 drop-shadow-[0_0_6px_rgba(153,27,27,0.5)]">
+              D<br />
+              <span className="text-3xl text-neutral-600">☠</span>
             </div>
           </div>
 
           {/* Muka Belakang Desktop (ADA SENTER dan efek Teks Transparan) */}
           <div 
             onMouseMove={handleMouseMove}
-            className="relative w-full min-h-[600px] [backface-visibility:hidden] [transform:rotateY(180deg)] border border-red-900/40 bg-neutral-950 p-8 text-neutral-200 shadow-[0_0_40px_-10px_rgba(153,27,27,0.2)] transition-all duration-700 group-hover/main:border-red-600/80 group-hover/main:shadow-[0_0_120px_10px_rgba(185,28,28,0.4)] overflow-hidden flex flex-col"
+            className="absolute inset-0 flex h-full w-full [transform:rotateY(180deg)] flex-col overflow-y-auto border border-red-900/40 bg-neutral-950 p-8 text-neutral-200 shadow-[0_0_40px_-10px_rgba(153,27,27,0.2)] transition-all duration-700 [backface-visibility:hidden] group-hover/main:border-red-600/80 group-hover/main:shadow-[0_0_120px_10px_rgba(185,28,28,0.4)]"
           >
             <div 
               className="pointer-events-none absolute -inset-px z-0 opacity-0 transition-opacity duration-700 group-hover/main:opacity-100"
               style={{
-                background: 'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(220,38,38,0.25), transparent 45%)'
+                background:
+                  'radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(220,38,38,0.25), transparent 45%)'
               }}
             />
 
             <div className="absolute top-0 left-0 z-10 h-[2px] w-full bg-gradient-to-r from-transparent via-red-800 to-transparent opacity-40 transition-opacity duration-1000 group-hover/main:opacity-100"></div>
 
             <div className="relative z-10 flex-1">
-              
               <div className="group/photo relative mb-8 overflow-hidden border-b border-red-900/50 pb-6">
                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-90"></div>
                 <Image src={ProfileImage} alt="Profile Image" className="h-[28rem] w-full object-cover object-center grayscale transition-all duration-700 ease-in-out group-hover/photo:scale-[1.02] group-hover/photo:grayscale-0" />
@@ -243,10 +246,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                   <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/0ct6r3EGTcMLPtrXHDvVjc?si=0725cd1e18c94e2f" />
                 </div>
               </div>
-
             </div>
           </div>
-          
         </div>
       </div>
 
