@@ -10,6 +10,7 @@ import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
 
 import ProfileImage from './image.png'
 import ProfileImage2 from './image2.png'
+import QuoteImage from './quote.png'
 
 
 type MemberPopupProps = {
@@ -22,6 +23,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isMusicPlaying, setIsMusicPlaying] = useState(true)
   const [showWarning, setShowWarning] = useState(true)
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [showImage2, setShowImage2] = useState(false)
 
   useEffect(() => {
     if (!isOpen) return
@@ -64,6 +67,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     }
   }, [isOpen, showWarning])
 
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setShowImage2(prev => !prev)
+  }, 500)
+  return () => clearInterval(interval)
+}, [])
   
 
   if (!isOpen) {
@@ -76,7 +85,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       style={{ backgroundColor: '#210705' }}>
       <div className="text-center">
         <p className="text-white text-4xl font-black"
-          style={{ fontFamily: 'var--font-cloisterblack'}}
+          style={{ fontFamily: 'var--font-BodoRoman'}}
           >⚠️ FLASH WARNING ⚠️</p>
         <p className="text-white/60 text-sm mt-4 max-w-sm mx-auto">This page contains flashing lights and effects that may affect photosensitive viewers.</p>
         <div className="flex gap-4 justify-center mt-8">
@@ -128,15 +137,56 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </button>
 
           <div 
-            className="border-neutral-cs-10/40 mb-5 overflow-hidden rounded-2xl border relative"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className="mb-5 rounded-[15px] relative cursor-pointer"
+            style={{ perspective: '1000px' }}
+            onMouseEnter={() => { setIsFlipped(true); setIsHovered(true) }}
+            onMouseLeave={() => { setIsFlipped(false); setIsHovered(false) }}
           >
-            <Image 
-              src={isHovered ? ProfileImage2 : ProfileImage} 
-              alt="Profile Image" 
-              className="h-120 w-full object-cover object-center transition-all duration-100" 
-            />
+            <div
+              style={{
+                transition: 'transform 0.6s',
+                transformStyle: 'preserve-3d',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                position: 'relative',
+                borderRadius: '50px'
+              }}
+            >
+              {/* Front - quote */}
+              <div style={{ 
+                backfaceVisibility: 'hidden',
+                borderRadius: '15px', 
+                overflow: 'hidden'
+              }}>
+                <Image 
+                  src={QuoteImage}
+                  alt="Quote" 
+                  className="h-120 w-full object-cover object-center" 
+                />
+              </div>
+              {/* Back - profile */}
+              <div style={{ 
+                backfaceVisibility: 'hidden', 
+                transform: 'rotateY(180deg)', 
+                position: 'absolute', 
+                inset: 0,
+                borderRadius: '15px', 
+                overflow: 'hidden'
+              }}>
+                {/* Both images preloaded, toggle opacity */}
+                  <Image 
+                    src={ProfileImage}
+                    alt="Profile Image" 
+                    className="h-120 w-full object-cover object-center absolute inset-0"
+                    style={{ opacity: showImage2 ? 0 : 1 }}
+                  />
+                  <Image 
+                    src={ProfileImage2}
+                    alt="Profile Image 2" 
+                    className="h-120 w-full object-cover object-center absolute inset-0"
+                    style={{ opacity: showImage2 ? 1 : 0 }}
+                  />
+                </div>
+            </div>
           </div>
 
           <button
@@ -152,15 +202,17 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 setIsMusicPlaying(!isMusicPlaying)
               }
             }}
-            className="mt-2 text-xs text-white/60 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] hover:-translate-y-1 transition-all duration-300"
-            style={{ fontFamily: 'var(--font-blackgoth)' }}
+            className="mt-2 text 1xl font-semibold text-white/60 
+                       hover:text-white 
+                       hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] 
+                       hover:-translate-y-1 transition-all duration-300"
           >
-            {isMusicPlaying ? 'Music🔇' : 'Music🔊'}
+            {isMusicPlaying ? '🔇Music' : '🔊Music'}
           </button>
 
           <div className="pr-10">
             {/* UBAH NAMA ANDA */}
-            <h2 className="text-2xl"style={{ fontFamily: 'var(--font-blackgoth)' }} >Azita Zahwa Zahida Asmoro</h2>
+            <h2 className="text-2xl font-black">Azita Zahwa Zahida Asmoro</h2>
             {/* UBAH NRP DAN ASAL */}
             <p className="text-neutral-cs-10/70 mt-1 text-sm font-semibold">5027251058 - Banjarnegara</p>
           </div>
@@ -189,6 +241,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 <li>Reading n Painting</li>
                 <li>Blasting songs 24/7</li>
                 <li>Learn new languages</li>
+                <li>Scrapbooking</li>
               </ul> 
             </div>
             <div className="border-neutral-cs-10/40 rounded-xl border p-4">
@@ -207,12 +260,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                >Lagu Favorit</p>
 
             {/*<p className="my-2 text-sm font-semibold">Alien</p>*/}
-            <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/3czfvJgfEDfBT5OKA5qAU5?si=673ccc70ea4141c0" />
+            <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/4atsZkGtoHHPugKK5wzAE1?si=ca2b456f489d40b6" />
 
             {/*<p className="my-2 text-sm font-semibold">sTraNgeRs</p>*/}
             <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/5fpq1wF8xa5tSSlcKHdmGQ?si=f0a404fc7b534c9f" />
 
-            {/*<p className="my-2 text-sm font-semibold">sTraNgeRs</p>*/}
+            {/*<p className="my-2 text-sm font-semibold">FiRE</p>*/}
             <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/3EPqLcliwi9bd5h77Hkuh8?si=4b36c328c9ee4ee2" />
           </div>
         </div>
