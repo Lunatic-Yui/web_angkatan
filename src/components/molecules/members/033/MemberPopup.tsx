@@ -43,7 +43,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
   return createPortal(
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 pt-28 pb-8 sm:pt-32">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-hidden px-4">
 
       {/* Styling tema astronomi */}
       <style>{`
@@ -91,7 +91,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       />
 
       {/* pop up card */}
-      <div className="relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-[720px] animate-[member-popup-show_300ms_ease-out] overflow-hidden rounded-3xl p-6 text-white sm:max-h-[calc(100vh-10rem)] sm:p-8 flex flex-col border-timbul-glow">
+      <div className="relative z-10 flex h-[100dvh] max-h-[100dvh] w-full max-w-[720px] animate-[member-popup-show_300ms_ease-out] flex-col overflow-hidden rounded-3xl p-6 text-white sm:p-8 border-timbul-glow">
 
 
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -135,7 +135,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         </div>
 
         {/* isi pop up card */}
-        <div className="relative z-10 overflow-y-auto w-full h-full pr-2 scrollbar-thin scrollbar-thumb-indigo-500/80 scrollbar-track-transparent">
+        <div className="relative z-10 h-full min-h-0 w-full overflow-y-auto overscroll-contain pr-2 scrollbar-thin scrollbar-thumb-indigo-500/80 scrollbar-track-transparent">
 
           <button
             type="button"
@@ -181,7 +181,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
           <div className="inner-box-glow mt-5 mb-2 rounded-xl p-5 border-2 border-[#38bdf8]">
             <p className="text-blue-300 text-xs font-black tracking-widest uppercase mb-2 drop-shadow-[0_0_8px_rgba(147,197,253,0.9)]">Lagu Favorit</p>
-            <p className="my-3 text-sm font-medium text-indigo-50">Banyak sih, sayangnya disini cuman bisa satu lagu :'( Yaudah deh, ini dia "Daylight - Maroon 5"</p>
+            <p className="my-3 text-sm font-medium text-indigo-50">
+              Banyak sih, sayangnya disini cuman bisa satu lagu :&apos;( Yaudah deh, ini dia &quot;Daylight -
+              Maroon 5&quot;
+            </p>
 
             <div className="rounded-xl overflow-hidden border-2 border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.5)]">
               <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/1NNAI51EuoRWw1ydX1zV7S?si=a6edcd2e0d454909" />
