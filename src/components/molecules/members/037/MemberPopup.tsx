@@ -1,6 +1,10 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+<<<<<<< HEAD
+=======
+import React, { useCallback, useEffect, useState } from 'react'
+>>>>>>> b1bfce937d4e458b144b5eebc54a7b23432ab790
 
 import Image from 'next/image'
 import { Cormorant_Garamond, Great_Vibes, Nunito, Silkscreen } from 'next/font/google'
@@ -83,6 +87,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
     <div
       className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-8 ${bodyFont.className}`}
+<<<<<<< HEAD
+=======
+
+      className={`fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 ${bodyFont.className}`}
+
+>>>>>>> b1bfce937d4e458b144b5eebc54a7b23432ab790
     >
       <style jsx global>{`
         @keyframes intro-gif-zoom {
