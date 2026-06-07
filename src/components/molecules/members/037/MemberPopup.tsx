@@ -1,44 +1,49 @@
 'use client'
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import React, { useEffect, useState } from 'react'
-import React, { useCallback, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
-import { Cormorant_Garamond, Nunito } from 'next/font/google'
-
-import { createPortal } from 'react-dom'
+import { Cormorant_Garamond, Great_Vibes, Nunito, Silkscreen } from 'next/font/google'
 
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
 
-import BackgroundImage from './background.jpg'
 import ProfileImage from './image.jpg'
-import IntroGif from './member-intro.gif'
+import BackgroundImage from './background.jpg'
 import SleepingCatGif from './sleeping_cat_zzz_clean.gif'
+import IntroGif from './member-intro.gif'
 
 type MemberPopupProps = {
   isOpen: boolean
   onClose: () => void
 }
 
+const initialFont = Great_Vibes({
+  subsets: ['latin'],
+  weight: '400',
+})
+
+const pixelFont = Silkscreen({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+})
+
 const titleFont = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['600', '700']
+  weight: ['600', '700'],
 })
 
 const bodyFont = Nunito({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800']
+  weight: ['400', '600', '700', '800'],
 })
 
 const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const [introPhase, setIntroPhase] = useState<'playing' | 'zooming' | 'done'>('playing')
-
-  const closePopup = useCallback(() => {
-    setIntroPhase('playing')
-    onClose()
-  }, [onClose])
 
   useEffect(() => {
     if (!isOpen) {
@@ -47,17 +52,18 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
     setIntroPhase('playing')
 
+    // GIF 7 detik, dimajuin 0.1 detik biar tidak sempat loop
     const zoomTimer = window.setTimeout(() => {
       setIntroPhase('zooming')
-    }, 6000)
+    }, 5900)
 
     const doneTimer = window.setTimeout(() => {
       setIntroPhase('done')
-    }, 7000)
+    }, 6900)
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closePopup()
+        onClose()
       }
     }
 
@@ -70,16 +76,18 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isOpen, closePopup])
+  }, [isOpen, onClose])
 
   if (!isOpen) {
     return null
   }
 
-  return (
+  return createPortal(
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
     <div
       className={`fixed inset-0 z-[100] flex items-start justify-center overflow-hidden px-4 ${bodyFont.className}`}
+      onClick={(event) => event.stopPropagation()}
+      onKeyDown={(event) => event.stopPropagation()}
     >
       <style jsx global>{`
         @keyframes intro-gif-zoom {
@@ -88,14 +96,16 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             transform: scale(1);
             filter: blur(0);
           }
+
           65% {
             opacity: 1;
-            transform: scale(1.65);
+            transform: scale(1.55);
             filter: blur(2px);
           }
+
           100% {
             opacity: 0;
-            transform: scale(2.45);
+            transform: scale(2.25);
             filter: blur(10px);
           }
         }
@@ -106,6 +116,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             transform: scale(0.76);
             filter: blur(16px);
           }
+
           100% {
             opacity: 1;
             transform: scale(1);
@@ -132,6 +143,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             transform: translateY(0) scale(1) rotate(0deg);
             opacity: 0.72;
           }
+
           50% {
             transform: translateY(-12px) scale(1.15) rotate(8deg);
             opacity: 1;
@@ -199,7 +211,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         type="button"
         aria-label="Close member detail"
         onClick={onClose}
-        className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md"
+        className="fixed inset-0 bg-[#020617]/80 backdrop-blur-md"
       />
 
       {introPhase !== 'done' ? (
@@ -210,7 +222,6 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               backgroundImage: `linear-gradient(135deg, rgba(3, 7, 18, 0.76), rgba(15, 39, 72, 0.72), rgba(3, 7, 18, 0.86)), url(${BackgroundImage.src})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundSize: 'cover'
             }}
           />
 
@@ -232,30 +243,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
           <div className="pointer-events-none absolute h-[280px] w-[280px] rounded-full bg-[#ffefb3]/20 blur-3xl animate-[intro-glow-pulse_2800ms_ease-in-out_infinite] sm:h-[420px] sm:w-[420px]" />
 
-          <div className="pointer-events-none absolute top-[14%] left-[8%] z-10 animate-[star-float_2700ms_ease-in-out_infinite] text-4xl text-[#fff7d6] drop-shadow-[0_0_20px_rgba(255,247,214,0.95)] sm:text-5xl">
-            ✦
-          </div>
-          <div className="pointer-events-none absolute top-[18%] right-[8%] z-10 animate-[star-float_3300ms_ease-in-out_infinite] text-4xl text-[#dbeafe] drop-shadow-[0_0_22px_rgba(191,219,254,0.95)] sm:text-5xl">
-            ☆
-          </div>
-          <div className="pointer-events-none absolute bottom-[18%] left-[12%] z-10 animate-[star-float_3000ms_ease-in-out_infinite] text-3xl text-[#fff7d6] drop-shadow-[0_0_18px_rgba(255,247,214,0.9)] sm:text-4xl">
-            ✧
-          </div>
-          <div className="pointer-events-none absolute right-[14%] bottom-[16%] z-10 animate-[star-float_3600ms_ease-in-out_infinite] text-3xl text-[#dbeafe] drop-shadow-[0_0_18px_rgba(191,219,254,0.9)] sm:text-4xl">
-            ✩
-          </div>
-
-          <button
-            type="button"
-            aria-label="Close member detail"
-            onClick={closePopup}
-            className="absolute top-4 right-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/10 text-2xl leading-none text-white shadow-[0_0_22px_rgba(255,255,255,0.45)] backdrop-blur-md transition hover:bg-white/20"
-          >
-            ×
-          </button>
           <div
-            className={`relative z-20 flex w-full max-w-[92vw] items-center justify-center sm:max-w-[720px] ${
-              introPhase === 'zooming'
+            className={`relative z-20 flex w-full max-w-[92vw] items-center justify-center overflow-visible rounded-[24px] bg-transparent sm:max-w-[720px] sm:rounded-[32px] ${introPhase === 'zooming'
                 ? 'animate-[intro-gif-zoom_1000ms_cubic-bezier(0.16,1,0.3,1)_forwards]'
                 : ''
             }`}
@@ -270,7 +259,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         </div>
       ) : (
         <>
-          {/* ORNAMEN KIRI DESKTOP - DIBUAT MENCAR */}
+          {/* ORNAMEN KIRI DESKTOP - MENCAR */}
           <div className="pointer-events-none absolute inset-y-0 left-0 z-[35] hidden w-[260px] lg:block">
             <div className="absolute left-8 top-[8%] text-3xl text-[#ffefb3] drop-shadow-[0_0_18px_rgba(255,239,179,0.95)] animate-[side-float-soft_3600ms_ease-in-out_infinite]">
               ✧
@@ -301,7 +290,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             </div>
           </div>
 
-          {/* ORNAMEN KANAN DESKTOP - DIBUAT MENCAR */}
+          {/* ORNAMEN KANAN DESKTOP - MENCAR */}
           <div className="pointer-events-none absolute inset-y-0 right-0 z-[35] hidden w-[260px] lg:block">
             <div className="absolute right-12 top-[7%] text-5xl text-[#ffefb3] drop-shadow-[0_0_22px_rgba(255,239,179,0.95)] animate-[glow-twinkle_2600ms_ease-in-out_infinite]">
               ☆
@@ -309,7 +298,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             <div className="absolute right-36 top-[16%] text-3xl text-[#ffefb3] drop-shadow-[0_0_18px_rgba(255,239,179,0.95)] animate-[side-float-soft_3500ms_ease-in-out_infinite]">
               ✦
             </div>
-            <div className="absolute right-18 top-[27%] text-5xl text-[#ffefb3] drop-shadow-[0_0_22px_rgba(255,239,179,0.95)] animate-[ribbon-sway_3400ms_ease-in-out_infinite]">
+            <div className="absolute right-[4.5rem] top-[27%] text-5xl text-[#ffefb3] drop-shadow-[0_0_22px_rgba(255,239,179,0.95)] animate-[ribbon-sway_3400ms_ease-in-out_infinite]">
               ୨ৎ
             </div>
             <div className="absolute right-40 top-[38%] text-4xl text-[#ffefb3] drop-shadow-[0_0_20px_rgba(255,239,179,0.95)] animate-[glow-twinkle_2900ms_ease-in-out_infinite]">
@@ -318,7 +307,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             <div className="absolute right-8 top-[50%] text-3xl text-[#ffefb3] drop-shadow-[0_0_18px_rgba(255,239,179,0.95)] animate-[side-float-soft_4000ms_ease-in-out_infinite]">
               ✧
             </div>
-            <div className="absolute right-34 top-[60%] text-4xl text-[#ffefb3] drop-shadow-[0_0_20px_rgba(255,239,179,0.95)] animate-[glow-twinkle_2700ms_ease-in-out_infinite]">
+            <div className="absolute right-[8.5rem] top-[60%] text-4xl text-[#ffefb3] drop-shadow-[0_0_20px_rgba(255,239,179,0.95)] animate-[glow-twinkle_2700ms_ease-in-out_infinite]">
               🐾
             </div>
             <div className="absolute right-14 top-[70%] text-4xl text-[#ffefb3] drop-shadow-[0_0_20px_rgba(255,239,179,0.95)] animate-[side-float-soft_3800ms_ease-in-out_infinite]">
@@ -333,7 +322,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </div>
 
           <div
-            className="member-popup-scroll relative z-10 max-h-[calc(100dvh-1.5rem)] w-full max-w-[720px] animate-[popup-reveal_700ms_cubic-bezier(0.16,1,0.3,1)_forwards] overflow-y-auto rounded-[24px] border border-[#ffefb3]/45 p-4 text-white shadow-[0_0_48px_rgba(255,239,179,0.28)] sm:max-h-[calc(100vh-4rem)] sm:rounded-[30px] sm:p-8 sm:shadow-[0_0_65px_rgba(255,239,179,0.34)]"
+            className="member-popup-scroll relative z-10 h-[100dvh] max-h-[100dvh] w-full max-w-[720px] animate-[popup-reveal_700ms_cubic-bezier(0.16,1,0.3,1)_forwards] overflow-y-auto overscroll-contain rounded-[24px] border border-[#ffefb3]/45 p-4 text-white shadow-[0_0_48px_rgba(255,239,179,0.28)] sm:rounded-[30px] sm:p-8 sm:shadow-[0_0_65px_rgba(255,239,179,0.34)]"
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(13, 35, 64, 0.68), rgba(45, 79, 115, 0.52), rgba(4, 18, 37, 0.78)), url(${BackgroundImage.src})`,
               backgroundSize: 'cover',
@@ -343,25 +332,6 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             }}
           >
             <div className="pointer-events-none absolute inset-0 z-0 rounded-[24px] bg-[radial-gradient(circle_at_18%_14%,rgba(255,239,179,0.18),transparent_25%),radial-gradient(circle_at_85%_35%,rgba(255,239,179,0.14),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(255,239,179,0.1),transparent_38%)] sm:rounded-[30px]" />
-
-            {/* Ornamen di dalam modal */}
-            <div className="pointer-events-none absolute left-4 top-6 z-[70] text-[#ffefb3] sm:left-5 sm:top-7">
-              <div className="text-2xl drop-shadow-[0_0_14px_rgba(255,239,179,0.95)] sm:text-3xl">✧</div>
-              <div className="mt-2 text-3xl drop-shadow-[0_0_16px_rgba(255,239,179,0.95)] sm:text-4xl">☆</div>
-              <div className="mt-3 text-xl drop-shadow-[0_0_12px_rgba(255,239,179,0.95)] sm:text-2xl">✦</div>
-            </div>
-
-            <div className="pointer-events-none absolute right-6 top-4 z-[70] text-[#ffefb3] sm:right-7 sm:top-5">
-              <div className="text-4xl drop-shadow-[0_0_18px_rgba(255,239,179,0.95)] sm:text-5xl">☆</div>
-            </div>
-
-            <div className="pointer-events-none absolute bottom-7 left-4 z-[70] text-[#ffefb3] sm:bottom-8 sm:left-5">
-              <div className="text-4xl drop-shadow-[0_0_18px_rgba(255,239,179,0.95)] sm:text-5xl">୨ৎ</div>
-            </div>
-
-            <div className="pointer-events-none absolute bottom-8 right-5 z-[70] text-[#ffefb3] sm:bottom-10 sm:right-7">
-              <div className="text-3xl drop-shadow-[0_0_16px_rgba(255,239,179,0.95)] sm:text-4xl">❀</div>
-            </div>
 
             <button
               type="button"
@@ -374,14 +344,6 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
             <div className="relative z-10">
               <div className="relative mb-4 overflow-hidden rounded-[20px] border border-[#ffefb3]/45 bg-[rgba(91,133,182,0.16)] shadow-[0_0_30px_rgba(255,239,179,0.22)] backdrop-blur-md sm:mb-5 sm:rounded-[24px] sm:shadow-[0_0_36px_rgba(255,239,179,0.26)]">
-                <div className="pointer-events-none absolute left-3 top-3 z-10 text-xl text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.95)]">
-                  ✦
-                </div>
-
-                <div className="pointer-events-none absolute right-4 top-3 z-10 text-2xl text-[#ffefb3] drop-shadow-[0_0_14px_rgba(255,239,179,0.95)]">
-                  ୨ৎ
-                </div>
-
                 <Image
                   src={ProfileImage}
                   alt="Profile Image"
@@ -389,7 +351,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 />
               </div>
 
-              <div className="relative rounded-[20px] border border-[#ffefb3]/40 bg-[rgba(91,133,182,0.16)] px-4 py-4 pr-8 shadow-[0_0_28px_rgba(255,239,179,0.22)] backdrop-blur-md sm:rounded-[24px] sm:px-5 sm:pr-10 sm:shadow-[0_0_32px_rgba(255,239,179,0.26)]">
+              <div className="relative overflow-visible rounded-[20px] border border-[#ffefb3]/40 bg-[rgba(91,133,182,0.16)] px-4 py-5 pr-8 shadow-[0_0_28px_rgba(255,239,179,0.22)] backdrop-blur-md sm:rounded-[24px] sm:px-5 sm:py-5 sm:pr-10 sm:shadow-[0_0_32px_rgba(255,239,179,0.26)]">
                 <div className="pointer-events-none absolute -top-3 right-5 text-3xl text-[#ffefb3] drop-shadow-[0_0_14px_rgba(255,239,179,0.95)]">
                   ☆
                 </div>
@@ -399,25 +361,56 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
 
                 {/* UBAH NAMA ANDA */}
-                <h2
-                  className={`${titleFont.className} whitespace-nowrap text-[clamp(1.55rem,7vw,3.25rem)] font-bold leading-none tracking-wide text-[#fff5d0] drop-shadow-[0_0_14px_rgba(255,239,179,0.98)]`}
-                >
-                  <span className="text-[clamp(2.1rem,9vw,4.55rem)] italic leading-none drop-shadow-[0_0_16px_rgba(255,239,179,0.98)]">
-                    S
+                <h2 className="flex w-full flex-nowrap items-end gap-x-1 overflow-visible whitespace-nowrap leading-none text-[#fff5d0]">
+                  <span className="flex min-w-0 shrink items-end overflow-visible">
+                    <span
+                      className={`${initialFont.className} shrink-0 text-[clamp(2rem,5.4vw,3.85rem)] leading-[0.78] text-[#fff5d0] drop-shadow-[0_0_26px_rgba(255,239,179,1)]`}
+                    >
+                      S
+                    </span>
+
+                    <span
+                      className={`${pixelFont.className} ml-[-0.16rem] inline-block shrink text-[clamp(0.72rem,1.85vw,1.2rem)] tracking-[-0.04em] text-[#fff5d0] drop-shadow-[0_0_6px_rgba(255,239,179,0.45)] sm:ml-[-0.26rem]`}
+                    >
+                      A
+                      <span className="relative inline-block text-[#fff5d0]">
+                        HIRA
+                        <span className="absolute -bottom-[5px] left-0 z-20 h-[2px] w-full rounded-full bg-[#ffefb3] shadow-[0_0_12px_rgba(255,239,179,1)]" />
+                      </span>
+                    </span>
                   </span>
-                  ahira{' '}
-                  <span className="text-[clamp(2.1rem,9vw,4.55rem)] italic leading-none drop-shadow-[0_0_16px_rgba(255,239,179,0.98)]">
-                    B
+
+                  <span className="flex min-w-0 shrink items-end overflow-visible">
+                    <span
+                      className={`${initialFont.className} shrink-0 text-[clamp(2rem,5.4vw,3.85rem)] leading-[0.78] text-[#fff5d0] drop-shadow-[0_0_26px_rgba(255,239,179,1)]`}
+                    >
+                      B
+                    </span>
+
+                    <span
+                      className={`${pixelFont.className} ml-[-0.15rem] inline-block shrink text-[clamp(0.72rem,1.85vw,1.2rem)] tracking-[-0.04em] text-[#fff5d0] drop-shadow-[0_0_6px_rgba(255,239,179,0.45)] sm:ml-[-0.24rem]`}
+                    >
+                      ILQIS
+                    </span>
                   </span>
-                  ilqis{' '}
-                  <span className="text-[clamp(2.1rem,9vw,4.55rem)] italic leading-none drop-shadow-[0_0_16px_rgba(255,239,179,0.98)]">
-                    R
+
+                  <span className="flex min-w-0 shrink items-end overflow-visible">
+                    <span
+                      className={`${initialFont.className} shrink-0 text-[clamp(2rem,5.4vw,3.85rem)] leading-[0.78] text-[#fff5d0] drop-shadow-[0_0_26px_rgba(255,239,179,1)]`}
+                    >
+                      R
+                    </span>
+
+                    <span
+                      className={`${pixelFont.className} ml-[-0.15rem] inline-block shrink text-[clamp(0.72rem,1.85vw,1.2rem)] tracking-[-0.04em] text-[#fff5d0] drop-shadow-[0_0_6px_rgba(255,239,179,0.45)] sm:ml-[-0.24rem]`}
+                    >
+                      IVADITO
+                    </span>
                   </span>
-                  ivadito
                 </h2>
 
                 {/* UBAH NRP DAN ASAL */}
-                <p className="mt-1 text-sm font-extrabold text-[#f8fafc]/92 sm:text-lg">5027251037 - Bekasi</p>
+                <p className="mt-3 text-sm font-extrabold text-[#f8fafc]/92 sm:text-lg">5027251037 - Bekasi</p>
               </div>
 
               <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2">
@@ -439,28 +432,30 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               </div>
 
               <div className="mt-5 grid gap-3 text-sm font-semibold sm:mt-6 sm:grid-cols-2 sm:gap-4">
-                <div className="relative flex min-h-[148px] flex-col items-center justify-center overflow-hidden rounded-[20px] border border-[#ffefb3]/35 bg-[rgba(91,133,182,0.16)] p-4 shadow-[0_0_26px_rgba(255,239,179,0.18)] backdrop-blur-md transition hover:scale-[1.01] hover:bg-[rgba(91,133,182,0.22)] hover:shadow-[0_0_36px_rgba(255,239,179,0.28)] sm:min-h-[168px] sm:rounded-[22px] sm:p-5">
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,239,179,0.14),transparent_42%)]" />
-
-                  <div className="pointer-events-none absolute -top-3 left-4 text-2xl text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.95)]">
+                <div className="relative flex min-h-[148px] flex-col items-center justify-center overflow-visible rounded-[20px] border border-[#ffefb3]/35 bg-[rgba(91,133,182,0.16)] p-4 shadow-[0_0_26px_rgba(255,239,179,0.18)] backdrop-blur-md transition hover:scale-[1.01] hover:bg-[rgba(91,133,182,0.22)] hover:shadow-[0_0_36px_rgba(255,239,179,0.28)] sm:min-h-[168px] sm:rounded-[22px] sm:p-5">
+                  <div className="pointer-events-none absolute -top-4 left-5 z-20 text-2xl text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.95)]">
                     ☆
                   </div>
 
-                  <div className="pointer-events-none absolute right-4 top-4 text-xl text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.95)]">
+                  <div className="pointer-events-none absolute -top-4 right-5 z-20 text-xl text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.95)]">
                     ✦
                   </div>
 
                   {/* UBAH HOBI KAMU */}
-                  <p className="absolute left-4 top-4 text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/85 sm:left-5 sm:top-5">
+                  <p className="absolute left-4 top-4 z-10 text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/90 drop-shadow-[0_0_8px_rgba(255,239,179,0.65)] sm:left-5 sm:top-5">
                     Hobi
                   </p>
 
-                  <Image
-                    src={SleepingCatGif}
-                    alt="Sleeping cat"
-                    unoptimized
-                    className="relative z-10 mt-5 h-20 w-20 object-contain drop-shadow-[0_0_18px_rgba(255,239,179,0.88)] sm:h-24 sm:w-24 sm:drop-shadow-[0_0_22px_rgba(255,239,179,0.92)]"
-                  />
+                  <div className="relative z-10 mt-5 flex h-24 w-24 items-center justify-center sm:h-28 sm:w-28">
+                    <div className="pointer-events-none absolute inset-0 rounded-full bg-[#ffefb3]/20 blur-2xl" />
+
+                    <Image
+                      src={SleepingCatGif}
+                      alt="Sleeping cat"
+                      unoptimized
+                      className="relative z-10 h-20 w-20 object-contain drop-shadow-[0_0_22px_rgba(255,239,179,0.95)] sm:h-24 sm:w-24 sm:drop-shadow-[0_0_28px_rgba(255,239,179,1)]"
+                    />
+                  </div>
                 </div>
 
                 <div className="relative rounded-[20px] border border-[#ffefb3]/35 bg-[rgba(91,133,182,0.16)] p-4 shadow-[0_0_24px_rgba(255,239,179,0.18)] backdrop-blur-md transition hover:scale-[1.01] hover:bg-[rgba(91,133,182,0.22)] hover:shadow-[0_0_34px_rgba(255,239,179,0.28)] sm:rounded-[22px] sm:p-5">
@@ -473,7 +468,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                   </div>
 
                   {/* UBAH FUNFACT KAMU */}
-                  <p className="text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/85">Fun Fact</p>
+                  <p className="text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/90 drop-shadow-[0_0_8px_rgba(255,239,179,0.65)]">
+                    Fun Fact
+                  </p>
                   <p className="mt-3 text-base font-extrabold leading-relaxed text-[#f8fafc] sm:text-lg">
                     hidup seputar kucing, biru, nonton, tidur /ᐠ - ˕ -マ
                   </p>
@@ -490,11 +487,19 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
 
                 {/* UBAH LAGU FAVORIT KAMU */}
-                <p className="text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/85">Lagu Favorit</p>
+                <p className="text-xs font-extrabold tracking-[0.3em] uppercase text-[#ffefb3]/90 drop-shadow-[0_0_8px_rgba(255,239,179,0.65)]">
+                  Lagu Favorit
+                </p>
                 <p
-                  className={`${titleFont.className} my-2 text-[1.9rem] font-bold leading-tight tracking-wide text-[#fff5d0] drop-shadow-[0_0_14px_rgba(255,239,179,0.98)] sm:text-4xl sm:leading-none`}
+                  className={`${titleFont.className} my-2 text-[clamp(1.35rem,4.2vw,2.25rem)] font-bold leading-tight tracking-wide text-[#fff5d0] drop-shadow-[0_0_12px_rgba(255,239,179,0.9)] sm:leading-none`}
                 >
-                  hidup mati kokwet laufey ౨ৎ
+                  apapun yg berunsur{' '}
+                  <span className="inline-block text-[#fff0b3] drop-shadow-[0_0_14px_rgba(255,239,179,0.95)]">
+                    Laufey/Reality Club
+                  </span>{' '}
+                  <span className="inline-block text-[#ffefb3] drop-shadow-[0_0_12px_rgba(255,239,179,0.9)]">
+                    ౨ৎ
+                  </span>
                 </p>
 
                 <div className="rounded-[18px] border border-[#ffefb3]/18 bg-[#061a33]/72 p-2 shadow-[inset_0_0_24px_rgba(255,239,179,0.06)] sm:rounded-[20px] sm:p-3">
@@ -506,7 +511,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </div>
         </>
       )}
-    </div>
+    </div>,
+    document.body
   )
 }
 
