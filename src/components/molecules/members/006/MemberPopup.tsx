@@ -453,7 +453,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 fontFamily: "'Rajdhani', sans-serif",
                 color: '#000000',
                 fontSize: '18px',
-                fontWeight: 800,
+                fontWeight: 850,
                 letterSpacing: '0.02em',
                 margin: '8px 0',
               }}
