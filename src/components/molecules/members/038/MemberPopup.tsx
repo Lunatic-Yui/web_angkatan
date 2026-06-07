@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
@@ -16,6 +17,7 @@ type MemberPopupProps = {
 }
 
 const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
+  const popupRef = useRef<HTMLDivElement>(null)
   const [showIntro, setShowIntro] = useState(true)
   const [isAmbruk, setIsAmbruk] = useState(false)
   // State timeline akting: hop-back -> become-o -> freeze-first -> missile-strike
@@ -23,6 +25,32 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   
   // State untuk kontrol balik kartu (Flip Card)
   const [isFlipped, setIsFlipped] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen || !popupRef.current) {
+      return
+    }
+
+    const itemAnimations = Array.from(popupRef.current.querySelectorAll<HTMLElement>('[data-popup-item]')).map(
+      (item, index) =>
+        item.animate(
+          [
+            { opacity: 0, transform: 'translateY(-32px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 450,
+            delay: 100 + index * 90,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both',
+          }
+        )
+    )
+
+    return () => {
+      itemAnimations.forEach((animation) => animation.cancel())
+    }
+  }, [isOpen, showIntro])
 
   useEffect(() => {
     if (!isOpen) {
@@ -79,8 +107,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     return null
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto px-4 py-6 bg-[#0072BB]/40 backdrop-blur-md">
+  return createPortal(
+    // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 bg-[#0072BB]/40 backdrop-blur-md">
       <button
         type="button"
         aria-label="Close member detail"
@@ -181,7 +210,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
       {/* ================= TAMPILAN 1: INTRO SEQUENCE MISSILE BLAST ================= */}
       {showIntro ? (
-        <div className="relative z-10 flex flex-col items-center justify-center p-10 select-none w-full h-full overflow-hidden">
+        <div className="relative z-10 flex flex-col items-center justify-center p-10 select-none w-full min-h-[100dvh] overflow-hidden">
           
           {/* OVERLAY LEDAKAN KUNING KOMIK */}
           {minionState === 'missile-strike' && (
@@ -249,7 +278,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       ) : (
         
         /* ================= TAMPILAN 2: PROFIL UTAMA DAFFA (FLIP 3D CARD JUMBO SIZE) ================= */
-        <div className="perspective-wrapper relative z-10 w-full max-w-[700px] h-[780px] sm:h-[820px] max-h-[calc(100vh-2rem)]">
+        <div
+          ref={popupRef}
+          className="perspective-wrapper relative z-10 max-h-[100dvh] h-[780px] sm:h-[820px] w-full max-w-[700px] animate-[member-popup-show_200ms_ease-out] my-auto"
+        >
           
           {/* Container Rotator Utama */}
           <div className={`card-rotator-3d relative w-full h-full hover:rotate-1 transition-transform duration-300 ${isFlipped ? 'flipped-state' : ''}`}>
@@ -268,7 +300,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </button>
 
                 {/* Foto Lanskap Daffa */}
-                <div className="w-full overflow-hidden rounded-[25px] border-[6px] border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-6 aspect-[16/10]">
+                <div data-popup-item className="w-full overflow-hidden rounded-[25px] border-[6px] border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-6 aspect-[16/10]">
                   <Image 
                     src={ProfileImage} 
                     alt="Profile Image" 
@@ -278,7 +310,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
 
                 {/* Identitas Teks */}
-                <div className="px-2 text-left">
+                <div data-popup-item className="px-2 text-left">
                   <h3 className="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none drop-shadow-[1px_1px_0px_rgba(255,255,255,1)]">
                     Daffa Rifqi As Shidiq
                   </h3>
@@ -288,7 +320,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
 
                 {/* Kotak Sosmed Denim Gelap & Hitam kontras */}
-                <div className="flex justify-start gap-4 pl-2 mt-6">
+                <div data-popup-item className="flex justify-start gap-4 pl-2 mt-6">
                    <div className="rounded-2xl border-[4px] border-black bg-[#0072BB] h-16 w-16 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:bg-black hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
                       <Instagram username="daffarifqiasshidiq" />
                    </div>
@@ -300,6 +332,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
               {/* Tombol Interaktif buat ngebalik kartu */}
               <button
+                data-popup-item
                 type="button"
                 onClick={() => setIsFlipped(true)}
                 className="w-full py-4 sm:py-5 mt-6 rounded-2xl border-[4px] border-black bg-white text-xs font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2"
@@ -313,13 +346,13 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               
               <div className="space-y-5 text-left">
                 {/* Header Kartu Belakang */}
-                <div className="flex justify-between items-center border-b-4 border-black pb-3 px-1 mt-2">
+                <div data-popup-item className="flex justify-between items-center border-b-4 border-black pb-3 px-1 mt-2">
                   <h4 className="text-2xl font-black uppercase tracking-tight">Banana Details 🍌</h4>
                   <span className="text-xs font-mono font-bold bg-white border-2 border-black px-2.5 py-1 rounded-md">INFO</span>
                 </div>
 
                 {/* Grid Box Hobi & Fun Fact */}
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div data-popup-item className="grid gap-5 sm:grid-cols-2">
                   <div className="rounded-[20px] border-[5px] border-black denim-texture p-5 text-white shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:scale-[1.03] transition-transform flex flex-col justify-between h-full min-h-[140px]">
                     <span className="rounded-md bg-white px-2.5 py-1 text-[10px] font-black uppercase text-black border-2 border-black self-start">
                       Hobi
@@ -335,7 +368,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
 
                 {/* Spotify Embed */}
-                <div className="rounded-[25px] border-[6px] border-black bg-white p-5 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]">
+                <div data-popup-item className="rounded-[25px] border-[6px] border-black bg-white p-5 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]">
                   <div className="mb-3.5 flex items-center justify-between border-b-4 border-black pb-2 px-1">
                     <p className="font-mono text-sm font-black text-[#0072BB]">♫ LAGU FAVORIT</p>
                     <span className="animate-bounce text-base">🎵</span>
@@ -351,6 +384,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
               {/* Tombol Balik Kembali ke Depan */}
               <button
+                data-popup-item
                 type="button"
                 onClick={() => setIsFlipped(false)}
                 className="w-full py-4 sm:py-5 mt-6 rounded-2xl border-[4px] border-black bg-black text-white text-xs font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(100,100,100,0.5)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
@@ -362,7 +396,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </div>
         </div>
       )}
-    </div>
+    </div>,
+    document.body
   )
 }
 

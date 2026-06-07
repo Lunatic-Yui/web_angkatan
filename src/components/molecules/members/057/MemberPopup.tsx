@@ -5,8 +5,6 @@ import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
-import { createPortal } from 'react-dom'
-
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
@@ -34,7 +32,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closePopup()
+        onClose()
       }
     }
 
@@ -45,7 +43,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isOpen, closePopup])
+  }, [isOpen, onClose])
 
   const handleAuthorize = async () => {
     if (accessCode !== '057') {
@@ -257,7 +255,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       <button
         type="button"
         aria-label="Close member detail"
-        onClick={closePopup}
+        onClick={onClose}
         className="fixed inset-0 bg-black/90 z-[9999]"
       />
 
@@ -292,7 +290,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           <button
             type="button"
             aria-label="Close member detail"
-            onClick={closePopup}
+            onClick={onClose}
             className="border-neutral-cs-10 hover:bg-neutral-cs-10/10 absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border text-xl leading-none"
           >
             x
