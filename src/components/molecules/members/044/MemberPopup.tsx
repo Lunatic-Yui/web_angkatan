@@ -266,10 +266,14 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         }
 
         .music-section-header {
-          margin-left: 2rem;
+          margin-left: 2.8rem;
           padding-top: 0.1rem;
           padding-bottom: 0.15rem;
           border-bottom: none;
+        }
+
+        .music-section-header .section-title {
+          margin-left: 0;
         }
 
         .section-body {
