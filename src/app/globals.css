@@ -124,8 +124,7 @@ body {
   }
 }
 
-
-@keyframes quote-glow-breathe {
+/*@keyframes quote-glow-breathe {
   0%,
   100% {
     filter: drop-shadow(0 0 12px rgba(173, 216, 230, 0.45));
@@ -135,3 +134,15 @@ body {
     filter: drop-shadow(0 0 24px rgba(173, 216, 230, 0.9));
   }
 }
+
+.overflow-y-auto::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-y-auto {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+}
+/*}
+
