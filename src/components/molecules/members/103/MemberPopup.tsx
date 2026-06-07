@@ -258,7 +258,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             {/* Lagu Favorit (opsional, tanpa ikon tambahan) */}
             <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-xl shadow-[0_8px_32px_rgba(31,38,135,0.18)]">
               <p className="text-neutral-cs-10/60 text-xs font-bold tracking-wide uppercase">Lagu Favorit</p>
-              <p className="my-2 text-sm font-semibold">Sunshine - Panturas</p>
+              <p className="my-2 text-sm font-semibold">Sunshine - Panturas.</p>
               <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/5j7HESfa8OXs3hTqQ1ZvnR?si=b204794961294c3d" />
             </div>
           </>
