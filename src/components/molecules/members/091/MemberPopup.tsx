@@ -10,6 +10,7 @@ import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
 
 import ProfileImage from './image.png'
+import './nier.css'
 
 type MemberPopupProps = {
   isOpen: boolean
