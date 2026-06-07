@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
@@ -164,6 +164,7 @@ const MixtapeLayout = ({ isPlaying, setIsPlaying, spotifyUrl }: { isPlaying: boo
 
 const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const [isPlaying, setIsPlaying] = useState(false)
+  const popupRef = useRef<HTMLDivElement>(null)
 
   // Fungsi bawaan useEffect tidak diubah
   useEffect(() => {
@@ -183,6 +184,32 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [isOpen, onClose])
+
+  useEffect(() => {
+    if (!isOpen || !popupRef.current) {
+      return
+    }
+
+    const itemAnimations = Array.from(popupRef.current.querySelectorAll<HTMLElement>('[data-popup-item]')).map(
+      (item, index) =>
+        item.animate(
+          [
+            { opacity: 0, transform: 'translateY(-32px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 450,
+            delay: 100 + index * 90,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both',
+          }
+        )
+    )
+
+    return () => {
+      itemAnimations.forEach((animation) => animation.cancel())
+    }
+  }, [isOpen])
 
   // Kondisi return null bawaan tidak diubah
   if (!isOpen) {
@@ -264,13 +291,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 30%, rgba(251,207,232,0.14) 0%, transparent 70%)' }} />
 
       <div
-        className="relative w-full max-w-[680px] opacity-0 animate-[popup-reveal_1.2s_ease-out_forwards] overflow-hidden rounded-3xl text-white shadow-2xl z-10"
+        ref={popupRef}
+        className="relative z-10 max-h-[100dvh] w-full max-w-[680px] animate-[popup-reveal_1.2s_ease-out_forwards] overflow-y-auto rounded-3xl text-white shadow-2xl"
         style={{
           background: 'linear-gradient(145deg,rgba(20,16,60,0.96) 0%,rgba(30,24,80,0.93) 100%)',
           border: '1.5px solid rgba(249,168,212,0.28)',
           boxShadow: '0 8px 40px rgba(249,168,212,0.15), 0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)',
-          marginTop: '2rem',
-          marginBottom: '2rem',
         }}
       >
         {/* Static Background Petals */}
@@ -291,7 +317,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         </button>
 
         {/* Hero Image */}
-        <div className="relative z-10 w-full h-72 sm:h-80 bg-gradient-to-br from-[#a855f7] to-[#ec4899] flex items-center justify-center overflow-hidden">
+        <div data-popup-item className="relative z-10 w-full h-72 sm:h-80 bg-gradient-to-br from-[#a855f7] to-[#ec4899] flex items-center justify-center overflow-hidden rounded-t-3xl">
           <svg className="absolute w-32 h-32 text-black/20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
           <Image src={ProfileImage} alt="Profile Image" className="absolute inset-0 h-full w-full object-cover object-center z-10" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 z-20" style={{ background: 'linear-gradient(to top, rgba(20,16,60,1), transparent)' }} />
@@ -319,21 +345,23 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </div>
 
           <div className="relative z-10">
-            <h2 className="text-2xl font-black tracking-tight" style={{ textShadow: '0 1px 12px rgba(249,168,212,0.35)' }}>
-              Helen Audya
-            </h2>
-            <p className="mt-1 mb-4 text-sm font-semibold" style={{ color: 'rgba(249,168,212,0.8)' }}>
-              5027251069 - Kediri
-            </p>
+            <div data-popup-item>
+              <h2 className="text-2xl font-black tracking-tight" style={{ textShadow: '0 1px 12px rgba(249,168,212,0.35)' }}>
+                Helen Audya
+              </h2>
+              <p className="mt-1 mb-4 text-sm font-semibold" style={{ color: 'rgba(249,168,212,0.8)' }}>
+                5027251069 - Kediri
+              </p>
+            </div>
 
             {/* KOMPONEN SOSIAL MEDIA BAWAAN KAMU DIKEMBALIKAN */}
-            <div className="mt-5 mb-5 flex gap-2">
+            <div data-popup-item className="mt-5 mb-5 flex gap-2">
               <Instagram username="hlenaudya" />
               <LinkedInButtonLink username="helenaudya" />
             </div>
 
             {/* Hobi & Fun Fact */}
-            <div className="mb-3 grid gap-3 text-sm font-semibold sm:grid-cols-2">
+            <div data-popup-item className="mb-3 grid gap-3 text-sm font-semibold sm:grid-cols-2">
               <div className="rounded-xl p-4 relative overflow-hidden backdrop-blur-sm" style={{ background: 'rgba(10,8,40,0.6)', border: '1px solid rgba(249,168,212,0.22)' }}>
                 <p className="text-xs uppercase tracking-wide mb-2" style={{ color: 'rgba(249,168,212,0.7)', letterSpacing: '0.08em' }}>Hobi</p>
                 <p>baca buku, nonton film</p>
@@ -345,11 +373,13 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             </div>
 
             {/* Lagu Favorit -> Mixtape */}
-            <MixtapeLayout 
-              isPlaying={isPlaying} 
-              setIsPlaying={setIsPlaying} 
-              spotifyUrl="https://open.spotify.com/track/1sEGwuvScFU2uNzlI7Aepy?si=8ba00be641094baa" 
-            />
+            <div data-popup-item>
+              <MixtapeLayout 
+                isPlaying={isPlaying} 
+                setIsPlaying={setIsPlaying} 
+                spotifyUrl="https://open.spotify.com/track/1sEGwuvScFU2uNzlI7Aepy?si=8ba00be641094baa" 
+              />
+            </div>
 
           </div>
         </div>
