@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from 'next/image'
@@ -89,10 +88,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   return createPortal(
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-8 ${bodyFont.className}`}
-
       className={`fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 ${bodyFont.className}`}
-
     >
       <style jsx global>{`
         @keyframes intro-gif-zoom {
