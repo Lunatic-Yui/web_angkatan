@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
@@ -22,17 +23,17 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const CORRECT_ANSWER = '5'
 
   const sudokuBoard = [
-    3, 4, 5,   8, 9, 1,   6, 7, 8,
-    6, 7, 8,   2, 3, 4,   9, 1, 2,
-    9, 1, 2,   5, 6, 7,   3, 4, 5,
+    3, 4, 5, 8, 9, 1, 6, 7, 8,
+    6, 7, 8, 2, 3, 4, 9, 1, 2,
+    9, 1, 2, 5, 6, 7, 3, 4, 5,
 
-    4, 5, 6,   1, 2, 3,   7, 8, 9,
-    7, 8, 9,   4, null, 6,   1, 2, 3,
-    1, 2, 3,   7, 8, 9,   4, 5, 6,
+    4, 5, 6, 1, 2, 3, 7, 8, 9,
+    7, 8, 9, 4, null, 6, 1, 2, 3,
+    1, 2, 3, 7, 8, 9, 4, 5, 6,
 
-    2, 3, 4,   9, 1, 2,   5, 6, 7,
-    5, 6, 7,   3, 4, 5,   8, 9, 1,
-    8, 9, 1,   6, 7, 8,   2, 3, 4
+    2, 3, 4, 9, 1, 2, 5, 6, 7,
+    5, 6, 7, 3, 4, 5, 8, 9, 1,
+    8, 9, 1, 6, 7, 8, 2, 3, 4
   ]
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     if (value !== '' && !/^[1-9]$/.test(value)) return
-    
+
     setInputValue(value)
 
     if (value === CORRECT_ANSWER) {
@@ -101,12 +102,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         {!isSolved ? (
           <div className="flex flex-col items-center justify-center py-6">
             <h3 className="mb-4 text-lg font-bold text-center">Complete the Sudoku</h3>
-            
+
             <div className="grid grid-cols-9 gap-[1px] bg-slate-200 p-[1px] text-slate-800 w-full max-w-[360px] aspect-square rounded-lg shadow-xl overflow-hidden">
               {sudokuBoard.map((val, index) => {
                 const row = Math.floor(index / 9)
                 const col = index % 9
-                
+
                 let extraClass = ''
                 if (col === 2 || col === 5) extraClass += ' mr-[2px] border-r border-slate-400/70'
                 if (row === 2 || row === 5) extraClass += ' mb-[2px] border-b border-slate-400/70'
