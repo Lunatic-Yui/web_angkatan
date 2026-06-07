@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -9,6 +9,7 @@ import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
 
 import ProfileImage from './image.png'
+import EvaCover from './eva-cover.png'
 
 type MemberPopupProps = {
   isOpen: boolean
@@ -16,8 +17,20 @@ type MemberPopupProps = {
 }
 
 const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
+  const [accessCode, setAccessCode] = useState('')
+  const [accessGranted, setAccessGranted] = useState(false)
+  const [error, setError] = useState('')
+  const [isAuthorizing, setIsAuthorizing] = useState(false)
+  const [terminalText, setTerminalText] = useState('')
   useEffect(() => {
     if (!isOpen) {
+      setAccessCode('')
+      setError('')
+      setTerminalText('')
+      setIsAuthorizing(false)
+      setAccessGranted(false)
+
+      document.body.style.overflow = ''
       return
     }
 
@@ -36,9 +49,102 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     }
   }, [isOpen, onClose])
 
+  const handleAuthorize = async () => {
+  if (accessCode !== '057') {
+    setError('ACCESS DENIED')
+    return
+  }
+
+  setError('')
+  setIsAuthorizing(true)
+
+  const lines = [
+    'CHECKING AUTHORIZATION...',
+    'SYNCHRONIZING PILOT DATA...',
+    'VERIFYING NERV DATABASE...',
+    'PILOT VERIFIED',
+    'ACCESS GRANTED',
+  ]
+
+  setTerminalText('')
+
+  for (const line of lines) {
+    await new Promise((resolve) => setTimeout(resolve, 700))
+
+    setTerminalText((prev) =>
+      prev ? `${prev}\n${line}` : line
+    )
+  }
+
+  setTimeout(() => {
+    setAccessGranted(true)
+    setIsAuthorizing(false)
+  }, 1000)
+}
+
   if (!isOpen) {
     return null
   }
+
+  if (!accessGranted) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4">
+      <div className="w-full max-w-xl rounded-2xl border-2 border-red-600 bg-black p-8 text-white shadow-2xl">
+        <div className="mb-6">
+          <p className="text-xs tracking-[0.5em] text-red-500">
+            NERV SECURITY SYSTEM
+          </p>
+
+          <h2 className="mt-3 text-3xl font-black text-red-500">
+            AUTHORIZATION REQUIRED
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-400">
+            Enter Pilot Access Code
+          </p>
+        </div>
+
+        {!isAuthorizing ? (
+          <>
+            <input
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
+              placeholder="- - -"
+              className="w-full rounded-lg border border-red-600 bg-black p-3 text-center text-lg tracking-[0.3em] outline-none"
+            />
+
+            {error && (
+              <p className="mt-3 font-semibold text-red-500">
+                {error}
+              </p>
+            )}
+
+            <button
+              onClick={handleAuthorize}
+              className="mt-5 w-full rounded-lg bg-red-600 py-3 font-bold transition hover:bg-red-700"
+            >
+              AUTHORIZE
+            </button>
+
+            <button
+              onClick={onClose}
+              className="mt-3 w-full rounded-lg border border-gray-600 py-3"
+            >
+              CANCEL
+            </button>
+          </>
+        ) : (
+          <div className="min-h-[220px] rounded-lg border border-red-600 bg-black p-4 font-mono text-green-400 whitespace-pre-line">
+            {terminalText}
+            <span className="animate-pulse">█</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
 
   return (
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
@@ -50,54 +156,121 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
 
-      <div className="border-neutral-cs-10 bg-blue-cs-40 relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-[720px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-2xl border-2 p-6 text-white shadow-xl sm:max-h-[calc(100vh-10rem)] sm:p-8">
-        <button
-          type="button"
-          aria-label="Close member detail"
-          onClick={onClose}
-          className="border-neutral-cs-10 hover:bg-neutral-cs-10/10 absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border text-xl leading-none"
+      <div className=" relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-[720px] overflow-y-auto rounded-2xl border-2 border-red-600 text-white shadow-xl sm:max-h-[calc(100vh-10rem)]
+          "style={{
+            backgroundColor: '#0a0a0a',
+            boxShadow:
+            'inset 8px 0 0 #ff0000, inset -8px 0 0 #ff0000',
+          }}
         >
-          x
-        </button>
 
-        <div className="border-neutral-cs-10/40 mb-5 overflow-hidden rounded-2xl border">
-          <Image src={ProfileImage} alt="Profile Image" className="h-120 w-full object-cover object-center" />
-        </div>
+        <div className="absolute top-0 left-0 h-1 w-full bg-red-600" />
+        <div className="absolute bottom-0 left-0 h-1 w-full bg-red-600" />
 
-        <div className="pr-10">
-          {/* UBAH NAMA ANDA */}
-          <h2 className="text-2xl font-black">Catherina Vallencia K</h2>
-          {/* UBAH NRP DAN ASAL */}
-          <p className="text-neutral-cs-10/70 mt-1 text-sm font-semibold">5027251082 - Surakarta</p>
-        </div>
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 rounded-2xl bg-black/60" />
 
-        <div className="mt-5 flex gap-2">
-          {/* UBAH USERNAME INSTAGRAM */}
-          <Instagram username="jkt48.erine" />
-          {/* UBAH USERNAME LINKEDIN */}
-          <LinkedInButtonLink username="jkt48.erine" />
-        </div>
+        {/* Content */}
+        <div className="relative z-10 p-6 sm:p-8">
+          <button
+            type="button"
+            aria-label="Close member detail"
+            onClick={onClose}
+            className="border-neutral-cs-10 hover:bg-neutral-cs-10/10 absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border text-xl leading-none"
+          >
+            x
+          </button>
 
-        <div className="mt-6 grid gap-4 text-sm font-semibold sm:grid-cols-2">
-          <div className="border-neutral-cs-10/40 rounded-xl border p-4">
-            {/* UBAH HOBI KAMU */}
-            <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">Hobi</p>
-            <p className="mt-2">Nyanyi</p>
+          <div className="group relative mb-5 overflow-hidden rounded-2xl border border-red-600/50">
+
+            {/* COVER EVA */}
+            <Image
+              src={EvaCover}
+              alt="Eva Cover"
+              className="
+                absolute inset-0 z-20
+                h-full w-full
+                object-cover
+                transition-opacity duration-700
+                group-hover:opacity-0
+              "
+            />
+
+            {/* FOTO ASLI */}
+            <Image
+              src={ProfileImage}
+              alt="Profile Image"
+              className="
+                h-120 w-full
+                object-cover object-center
+              "
+            />
+
+            {/* NERV Label */}
+            <div className="absolute bottom-4 left-4 bg-red-700 px-3 py-1 text-xs font-bold tracking-widest">
+              NERV PILOT FILE
+            </div>
           </div>
-          <div className="border-neutral-cs-10/40 rounded-xl border p-4">
-            {/* UBAH FUNFACT KAMU */}
-            <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">Fun Fact</p>
-            <p className="mt-2">Gwe Member JKT</p>
+
+          <div className="mb-3 text-xs font-bold tracking-[0.3em] text-red-500">
+            NERV PERSONNEL DATA
           </div>
-        </div>
 
-        <div className="border-neutral-cs-10/40 mt-4 rounded-xl border p-4">
-          {/* UBAH LAGU FAVORIT KAMU */}
-          <p className="text-neutral-cs-10/60 text-xs font-bold tracking-wide uppercase">Lagu Favorit</p>
-          <p className="my-2 text-sm font-semibold">There Is a Light That Never Goes Out</p>
+          <div className="pr-10">
+            {/* UBAH NAMA ANDA */}
+            <h2 className="text-2xl font-black tracking-wider text-red-500">
+              Riezco Eka Bayu Witantra
+            </h2>
 
-          {/* UBAH URL SPOTIFY KAMU DENGAN LAGU FAVORIT MU */}
-          <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/2X62SjtuwVQiGiZvZZ9Ztr?si=f6718391848a4469" />
+            {/* UBAH NRP DAN ASAL */}
+            <p className="mt-1 text-sm font-semibold text-gray-400">
+              5027251057 - Rembang
+            </p>
+          </div>
+
+          <div className="mt-5 flex gap-2">
+            {/* UBAH USERNAME INSTAGRAM */}
+            <Instagram username="riez_wi" />
+
+            {/* UBAH USERNAME LINKEDIN */}
+            <LinkedInButtonLink username="riezcowitantra" />
+          </div>
+
+          <div className="mt-6 grid gap-4 text-sm font-semibold sm:grid-cols-2">
+            <div className="border-red-700/40 bg-black rounded-xl border p-4">
+              {/* UBAH HOBI KAMU */}
+              <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">
+                Hobi
+              </p>
+              <p className="mt-2">
+                nge game sama sepeda aja deh
+              </p>
+            </div>
+
+            <div className="border-red-700/40 bg-black rounded-xl border p-4">
+              {/* UBAH FUNFACT KAMU */}
+              <p className="text-neutral-cs-10/60 text-xs tracking-wide uppercase">
+                Fun Fact
+              </p>
+              <p className="mt-2">
+                Gwe pilot EVA!!!!
+              </p>
+            </div>
+          </div>
+
+          <div className="border-neutral-cs-10/40 mt-4 rounded-xl border p-4">
+            {/* UBAH LAGU FAVORIT KAMU */}
+            <p className="text-neutral-cs-10/60 text-xs font-bold tracking-wide uppercase">
+              Lagu Favorit
+            </p>
+
+            <p className="my-2 text-sm font-semibold">
+              残酷な天使のテーゼ
+            </p>
+
+            {/* UBAH URL SPOTIFY KAMU DENGAN LAGU FAVORIT MU */}
+            <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/23phSRwoMy48rwFpmuAP8q?si=c795c4c5f2ca48e0" />
+          </div>
         </div>
       </div>
     </div>
