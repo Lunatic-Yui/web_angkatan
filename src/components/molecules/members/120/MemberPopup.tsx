@@ -352,7 +352,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                   </li>
                   <li className="flex items-start gap-1.5">
                     <span className="text-cyan-400">‣</span>
-                    <span>Main Game terutama Gacha, Shooter, RPG, Anime, Sandbox</span>
+                    <span>Main Game (Terutama Gacha, Shooter, RPG, Anime, Sandbox)</span>
                   </li>
                   <li className="flex items-start gap-1.5">
                     <span className="text-cyan-400">‣</span>
