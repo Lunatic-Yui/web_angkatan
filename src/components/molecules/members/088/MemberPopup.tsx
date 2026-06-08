@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
+
 import Image from 'next/image'
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
@@ -244,8 +246,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 pt-28 pb-8 sm:pt-32">
+  return createPortal(
+    // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4">
       <button
         type="button"
         aria-label="Close member detail"
@@ -254,31 +257,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         style={{ background: 'rgba(3,5,20,0.75)', backdropFilter: 'blur(6px)' }}
       />
 
-      <div
-        className="relative z-10 w-full overflow-hidden rounded-2xl text-white"
-        style={{
-          maxWidth: '480px',
-          background: 'rgba(6,10,30,0.68)',
-          border: '1px solid rgba(140,120,255,0.25)',
-          backdropFilter: 'blur(14px)',
-          boxShadow: '0 0 80px rgba(90,60,220,0.2), 0 0 30px rgba(200,100,255,0.08), 0 4px 40px rgba(0,0,0,0.6)',
-          animation: 'member-popup-show 200ms ease-out',
-        }}
-      >
-        {/* Background stars/meteors layer behind the whole card */}
-        <canvas
-          ref={bgCanvasRef}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: -1,
-          }}
-        />
-
-        {/* Close button */}
+      <div className="border-neutral-cs-10 bg-blue-cs-40 relative z-10 max-h-[100dvh] w-full max-w-[720px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-2xl border-2 p-6 text-white shadow-xl sm:p-8">
         <button
           type="button"
           aria-label="Close member detail"
@@ -356,7 +335,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
