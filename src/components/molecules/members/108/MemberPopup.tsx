@@ -4,6 +4,8 @@ import React, { useEffect } from 'react'
 
 import Image from 'next/image'
 
+import { createPortal } from 'react-dom'
+
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
 import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
@@ -40,9 +42,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     return null
   }
 
-  return (
+  return createPortal(
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 pt-28 pb-8 sm:pt-32">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-hidden px-4">
       <button
         type="button"
         aria-label="Close member detail"
@@ -97,10 +99,11 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           <p className="my-2 text-sm font-semibold">Im Low On Gas and You Need A Jacket</p>
 
           {/* UBAH URL SPOTIFY KAMU DENGAN LAGU FAVORIT MU */}
-          <SpotifyEmbed spotifyUrl="https://open.spotify.com/user/31wyf5q24v6jjed3diq3wj5ctoii?si=f5b631825bcb4e93" />
+          <SpotifyEmbed spotifyUrl="https://open.spotify.com/track/40WWeoX26jtsfdmFx5iRty?si=039f75dfe39b4b5d" />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
