@@ -82,7 +82,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           <div className="rounded-xl border border-violet-400/18 bg-[#2e1065]/70 p-4">
             {/* UBAH FUNFACT KAMU */}
             <p className="text-xs tracking-wide uppercase text-violet-300/50">Fun Fact</p>
-            <p className="mt-2 text-violet-100">Hobiku Ada 5. Dengerin Lagu, Nyanyi, Main Gitar, Baca Buku & Nonton Film</p>
+            <p className="mt-2 text-violet-100">Hobiku 5. Dengerin Lagu, Nyanyi, Main Gitar, Baca Buku & Nonton Film</p>
           </div>
         </div>
         <div className="mt-4 rounded-xl border border-violet-400/18 bg-[#2e1065]/70 p-4">
