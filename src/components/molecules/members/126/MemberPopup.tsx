@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
@@ -11,7 +11,8 @@ import SpotifyEmbed from '@/components/molecules/SpotifyEmbed'
 
 import ProfileImage from './image.jpg'
 import ProfileImage2 from './image2.png'
-import VoidBackground from './Time.webp'
+import VoidBackground from './Aincrad.webp'
+import AlfheimBackground from './SAO.jpg'
 
 type MemberPopupProps = {
   isOpen: boolean
@@ -19,7 +20,43 @@ type MemberPopupProps = {
 }
 
 const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
+  const CROSSING_FIELD_URL = "https://github.com/Raillyn-FA/MyAssets/releases/download/v1.0/LiSA_CrossingField.mp3"
+  const audioRef = useRef<HTMLAudioElement>(null)
   const [isFlipped, setIsFlipped] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+
+  const togglePlay = () => {
+  if (audioRef.current) {
+    if (isPlaying) {
+      audioRef.current.pause()
+    } else {
+      audioRef.current.play().catch(() => {})
+    }
+    setIsPlaying(!isPlaying)
+    }
+  }
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen && audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch(() => {})
+      setIsPlaying(true)
+    }
+    if (!isOpen && audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      setIsPlaying(false)
+    }
+  }, [isOpen])
+
   useEffect(() => {
     if (!isOpen) {
       return
@@ -51,7 +88,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         type="button"
         aria-label="Close member detail"
         onClick={onClose}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${AlfheimBackground.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
       />
 
       <div className="relative z-10 max-h-[100dvh] w-full max-w-[760px] overflow-y-auto overflow-x-hidden rounded-[32px] border-4 border-black/80 shadow-[0_0_20px_rgba(255,255,255,0.4),0_0_40px_rgba(255,255,255,0.15),inset_0_0_15px_rgba(255,255,255,0.05)] bg-[#071226]/70 p-5 text-white shadow-[0_0_60px_rgba(124,58,237,0.18)] backdrop-blur-xl sm:p-8"
@@ -60,8 +102,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           backgroundAttachment: 'local',
-  }}
->
+        }}
+      >
         
         <button
           type="button"
@@ -92,6 +134,19 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
           />
 
         </div>
+
+        <div className="flex items-center gap-2 mt-2">
+          <audio ref={audioRef} loop src={CROSSING_FIELD_URL} />
+          <span className="text-sm font-semibold text-white/80">Music:</span>
+          <button
+            onClick={togglePlay}
+            className="text-sm font-bold transition-all hover:scale-105"
+            style={{ color: isPlaying ? '#4ade80' : '#f87171' }}
+          >
+            {isPlaying ? 'ON' : 'OFF'}
+          </button>
+        </div>
+
         <div className="pr-10">
           {/* UBAH NAMA ANDA */}
           <h2 className="font-sans text-4xl font-black tracking-wide" style={{textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black'}} >Rayhan Fadhilah Allayn</h2>
