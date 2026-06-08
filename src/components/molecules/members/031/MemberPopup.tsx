@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
@@ -40,37 +39,40 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleKeyDown)
 
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch(() => {})
+    const audio = audioRef.current
+
+    if (audio) {
+      audio.currentTime = 0
+      audio.play().catch(() => {})
     }
 
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeyDown)
 
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
+      if (audio) {
+        audio.pause()
+        audio.currentTime = 0
       }
     }
   }, [isOpen, onClose])
 
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 pt-28 pb-8 sm:pt-32">
   return createPortal(
-    // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4">
+    <div
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-hidden px-4"
+      onClick={(event) => event.stopPropagation()}
+      onKeyDown={(event) => event.stopPropagation()}
+    >
       <button
         type="button"
         aria-label="Close member detail"
         onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm"
       />
 
-      <div className="relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-[720px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-[32px] border-2 border-[#d8c9b4] bg-[#f8f2e9] p-6 text-[#5c4632] shadow-2xl sm:max-h-[calc(100vh-10rem)] sm:p-8">
+      <div className="relative z-10 h-[100dvh] max-h-[100dvh] w-full max-w-[720px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto overscroll-contain rounded-[32px] border-2 border-[#d8c9b4] bg-[#f8f2e9] p-6 text-[#5c4632] shadow-2xl sm:p-8">
 
         {/* MUSIC */}
        <audio ref={audioRef} loop>
@@ -93,7 +95,6 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         />
 
         {/* CLOSE */}
-      <div className="border-neutral-cs-10 bg-blue-cs-40 relative z-10 max-h-[100dvh] w-full max-w-[720px] animate-[member-popup-show_200ms_ease-out] overflow-y-auto rounded-2xl border-2 p-6 text-white shadow-xl sm:p-8">
         <button
           type="button"
           aria-label="Close member detail"
@@ -237,7 +238,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
         {/* QUOTE */}
         <div className="mt-3 text-center text-sm italic text-[#8b7157]">
-          "Collecting little memories, one journey at a time."
+          &quot;Collecting little memories, one journey at a time.&quot;
         </div>
 
       </div>

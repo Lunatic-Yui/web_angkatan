@@ -413,6 +413,7 @@ body {
     animation-duration: 1ms;
     animation-delay: 0ms;
   }
+}
 @keyframes quote-glow-breathe {
   0%,
   100% {
