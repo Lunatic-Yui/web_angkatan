@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
@@ -158,7 +159,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
