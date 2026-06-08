@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { createPortal } from 'react-dom'
 
-import { createPortal } from 'react-dom'
 
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
 import LinkedInButtonLink from '@/components/atoms/button/LinkedInButtonLink'
