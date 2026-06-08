@@ -21,7 +21,13 @@ const CardMember = () => {
       <div
         role="button"
         tabIndex={0}
-        onClick={() => setIsPopupOpen(true)}
+        onClick={(event) => {
+          if (event.target !== event.currentTarget) {
+            return
+          }
+
+          setIsPopupOpen(true)
+        }}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
