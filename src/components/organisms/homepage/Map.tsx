@@ -20,7 +20,7 @@ const Map = () => {
           EVASTRA Maps
         </h2>
       </ScrollReveal>
-      <ScrollReveal className="w-full" delay={120} distance={36}>
+      <ScrollReveal className="flex w-full justify-center overflow-x-hidden px-4" delay={120} distance={36}>
         <MapInteractive provinces={mapData.provinces} svgWidth={mapData.svgWidth} svgHeight={mapData.svgHeight} />
       </ScrollReveal>
     </section>

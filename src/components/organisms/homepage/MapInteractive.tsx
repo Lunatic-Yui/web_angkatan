@@ -46,7 +46,7 @@ const MapInteractive = ({ provinces, svgWidth, svgHeight }: MapInteractiveProps)
                     <g
                       className={`transition-[filter] duration-200 ${hasMahasiswa
                         ? 'cursor-pointer hover:brightness-110 hover:contrast-125 focus:outline-none focus-visible:outline-none'
-                        : 'cursor-default opacity-40'
+                        : 'cursor-default filter grayscale opacity-50'
                         }`}
                       tabIndex={hasMahasiswa ? 0 : undefined}
                       aria-label={`${province.province}, total mahasiswa ${province.totalMahasiswa}`}
