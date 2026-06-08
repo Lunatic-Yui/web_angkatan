@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
 import Instagram from '@/components/atoms/button/InstagramButtonLink'
@@ -33,12 +34,12 @@ const playSound = (note: string) => {
 
   const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext
   if (!AudioContext) return
-  
+
   const audioCtx = new AudioContext()
   const oscillator = audioCtx.createOscillator()
   const gainNode = audioCtx.createGain()
 
-  oscillator.type = 'triangle' 
+  oscillator.type = 'triangle'
   oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime)
 
   gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime)
@@ -82,7 +83,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     setPlayedNotes(newPlayedNotes)
 
     const currentStep = newPlayedNotes.length - 1
-    
+
     if (newPlayedNotes[currentStep] !== SECRET_MELODY[currentStep]) {
       setPlayedNotes([])
     } else if (newPlayedNotes.length === SECRET_MELODY.length) {
@@ -92,7 +93,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
   if (!isOpen) return null
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 pt-28 pb-8 sm:pt-32">
       {/* Backdrop luar */}
       <button
@@ -102,23 +103,23 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         className="absolute inset-0 bg-black/80 backdrop-blur-md"
       />
 
-{/* Video background seluruh popup */}
-<video
-  autoPlay
-  loop
-  muted
-  playsInline
-  className="absolute inset-0 h-full w-full object-cover"
->
-  <source src="/assets/videos/118.mp4" type="video/mp4" />
-</video>
+      {/* Video background seluruh popup */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/assets/videos/118.mp4" type="video/mp4" />
+      </video>
 
-{/* Overlay gelap */}
-<div className="absolute inset-0 bg-black/60" />
+      {/* Overlay gelap */}
+      <div className="absolute inset-0 bg-black/60" />
 
-{/* Card utama */}
-<div
-  className="
+      {/* Card utama */}
+      <div
+        className="
     relative z-10
     h-[calc(100vh-9rem)]
     sm:h-[calc(100vh-10rem)]
@@ -131,8 +132,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     overflow-hidden
     shadow-[0_0_40px_rgba(255,255,255,0.08)]
   "
->
-        
+      >
+
         {/* Mini Game / Unlock Screen */}
         {!isUnlocked && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#080911]/95 p-6 text-center backdrop-blur-xl transition-opacity duration-500">
@@ -146,9 +147,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             </button>
             <h3 className="mb-2 text-3xl font-serif tracking-widest text-[#d5b98a] drop-shadow-sm">Crackling Box</h3>
             <p className="mb-8 text-sm font-light tracking-wide text-neutral-400">
-              "The German Songs That Familiar in Ears" <br/> Play the melody to open my profile
+              "The German Songs That Familiar in Ears" <br /> Play the melody to open my profile
             </p>
-            
+
             <div className="w-full max-w-2xl border-y border-white/10 py-5">
               <div className="flex w-full items-center justify-between divide-x divide-white/10">
                 {NOTES.map((note) => (
@@ -163,14 +164,13 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 ))}
               </div>
             </div>
-            
+
             <div className="mt-8 flex gap-3">
               {SECRET_MELODY.map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`h-2.5 w-2.5 rounded-full border border-[#d5b98a]/50 transition-all duration-300 ${
-                    i < playedNotes.length ? 'scale-125 bg-[#d5b98a]' : 'bg-transparent'
-                  }`} 
+                <div
+                  key={i}
+                  className={`h-2.5 w-2.5 rounded-full border border-[#d5b98a]/50 transition-all duration-300 ${i < playedNotes.length ? 'scale-125 bg-[#d5b98a]' : 'bg-transparent'
+                    }`}
                 />
               ))}
             </div>
@@ -183,7 +183,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
         {/* KONTAINER INTERNAL SCROLL - Di sinilah isi konten ditaruh agar bisa di-scroll secara independen */}
         <div className="relative z-10 h-full w-full overflow-y-auto p-6 sm:p-8">
-          
+
           {/* Tombol Close */}
           <button
             type="button"
@@ -196,10 +196,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
           {/* Wrapper Foto Profil Utama */}
           <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10 shadow-lg">
-            <Image 
-              src={ProfileImage} 
-              alt="Profile Image" 
-              className="h-120 w-full object-cover object-center" 
+            <Image
+              src={ProfileImage}
+              alt="Profile Image"
+              className="h-120 w-full object-cover object-center"
             />
           </div>
 
@@ -245,7 +245,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

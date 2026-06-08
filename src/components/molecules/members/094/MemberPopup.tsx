@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 import Image from 'next/image'
 
@@ -22,6 +23,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   const [stage, setStage] = useState(0)
   const [skullTaps, setSkullTaps] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
 
   // STATS BARU: Untuk kontrol interaksi swipe / drag kartu
   const [isDragging, setIsDragging] = useState(false)
@@ -72,16 +74,42 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             audioRef.current?.pause()
           } else {
             if (stage > 0) {
-              audioRef.current?.play().catch(() => {})
+              audioRef.current?.play().catch(() => { })
             }
           }
         }
-      } catch {}
+      } catch { }
     }
 
     window.addEventListener('message', handleSpotifyMessage)
     return () => window.removeEventListener('message', handleSpotifyMessage)
   }, [stage])
+
+  useEffect(() => {
+    if (!isOpen || !popupRef.current || stage !== 2) {
+      return
+    }
+
+    const itemAnimations = Array.from(popupRef.current.querySelectorAll<HTMLElement>('[data-popup-item]')).map(
+      (item, index) =>
+        item.animate(
+          [
+            { opacity: 0, transform: 'translateY(-32px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 450,
+            delay: 100 + index * 90,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both',
+          }
+        )
+    )
+
+    return () => {
+      itemAnimations.forEach((animation) => animation.cancel())
+    }
+  }, [isOpen, stage])
 
   if (!isOpen) {
     return null
@@ -90,7 +118,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   // Handler Stage 0 (Skull)
   const handleSkullTap = () => {
     if (skullTaps === 0) {
-      audioRef.current?.play().catch(() => {})
+      audioRef.current?.play().catch(() => { })
       setSkullTaps(1)
     } else {
       setStage(1)
@@ -123,7 +151,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       const direction = dragOffset > 0 ? 'right' : 'left'
       setIsSwipedAway(true)
       setSwipeDirection(direction)
-      
+
       // Beri jeda animasi melempar kartu (350ms) sebelum ganti ke identitas
       setTimeout(() => {
         setStage(2)
@@ -141,14 +169,14 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md group/modal select-none">
-      
-      <audio 
-        ref={audioRef} 
-        src="/assets/sounds/Fire Force.mp3" 
-        loop 
-        className="hidden" 
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto px-4 bg-black/80 backdrop-blur-md group/modal select-none">
+
+      <audio
+        ref={audioRef}
+        src="/assets/sounds/Fire Force.mp3"
+        loop
+        className="hidden"
       />
 
       <style>{`
@@ -227,22 +255,23 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       />
 
       {/* Main Responsive Frame Canvas */}
-      <div 
-        className="relative z-10 w-full max-w-[720px] h-[85vh] max-h-[850px] min-h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ease-out bg-black"
+      <div
+        ref={popupRef}
+        className="relative z-10 w-full max-w-[720px] max-h-[100dvh] min-h-[500px] rounded-2xl overflow-y-auto overflow-x-hidden shadow-2xl transition-all duration-300 ease-out bg-black my-auto custom-scrollbar"
       >
-        
+
         {/* ========================================================= */}
         {/* STAGE 0: TENGKORAK FIRE FORCE (TAP TAP)                   */}
         {/* ========================================================= */}
         {stage === 0 && (
-          <div 
+          <div
             className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#8b0000] cursor-pointer"
             onClick={handleSkullTap}
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,69,0,0.8)_0%,_#4a0000_100%)]" />
             <div className="relative z-10 flex flex-col items-center justify-center group text-center">
-              <svg 
-                viewBox="0 0 100 100" 
+              <svg
+                viewBox="0 0 100 100"
                 className="w-48 h-48 sm:w-56 sm:h-56 transition-transform duration-200"
                 style={{
                   animation: skullTaps > 0 ? 'skullShake 0.3s infinite alternate' : 'none',
@@ -266,10 +295,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         {/* STAGE 1: KARTU KARAKTER JOKER (DENGAN NAVIGASI SWIPE)     */}
         {/* ========================================================= */}
         {stage === 1 && (
-          <div 
+          <div
             className={`absolute inset-0 z-50 flex flex-col items-center justify-center bg-black overflow-hidden ${!isDragging && !isSwipedAway ? 'joker-glitch-active' : ''}`}
             style={{ animation: 'jokerAuraPulse 3s infinite' }}
-            
+
             // Mouse Events (Desktop Drag Simulation)
             onMouseDown={(e) => onDragStart(e.clientX)}
             onMouseMove={(e) => onDragMove(e.clientX)}
@@ -285,9 +314,9 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               KARTU JOKER ANIMATIF:
               Bergeser dan berputar halus real-time mengikuti cursor/jari 
             */}
-            <div 
+            <div
               style={{
-                transform: isSwipedAway 
+                transform: isSwipedAway
                   ? `translateX(${swipeDirection === 'right' ? '160%' : '-160%'}) rotate(${swipeDirection === 'right' ? '35deg' : '-35deg'})`
                   : `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)`,
                 transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s',
@@ -297,12 +326,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               className="absolute inset-0 border-[12px] border-white m-4 rounded-xl flex flex-col items-center justify-between p-6 bg-[#e5e5e5] relative select-none shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
             >
               {/* Desain Pojok Kartu */}
-              <div className="absolute top-4 left-4 text-4xl font-serif text-black pointer-events-none">J<br/><span className="text-2xl">♣</span></div>
-              <div className="absolute bottom-4 right-4 text-4xl font-serif text-black rotate-180 pointer-events-none">J<br/><span className="text-2xl">♣</span></div>
+              <div className="absolute top-4 left-4 text-4xl font-serif text-black pointer-events-none">J<br /><span className="text-2xl">♣</span></div>
+              <div className="absolute bottom-4 right-4 text-4xl font-serif text-black rotate-180 pointer-events-none">J<br /><span className="text-2xl">♣</span></div>
 
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl font-serif text-black tracking-widest mt-4 uppercase border-b-2 border-black pb-2 pointer-events-none">The Fool</h1>
-              
+
               {/* Gambar Vektor Manga Joker */}
               <div className="flex-1 w-full flex items-center justify-center relative my-4 pointer-events-none">
                 <svg viewBox="0 0 200 200" className="w-full h-full max-w-[300px] drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]">
@@ -322,7 +351,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
               </div>
 
               <h2 className="text-3xl sm:text-4xl font-serif text-black tracking-[0.5em] mb-4 uppercase pointer-events-none">Joker</h2>
-              
+
               <div className="absolute bottom-8 text-black/60 font-mono text-xs animate-bounce pointer-events-none">
                 [ SWIPE CARD LEFT/RIGHT TO REVEAL ]
               </div>
@@ -333,22 +362,22 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
         {/* ========================================================= */}
         {/* STAGE 2: IDENTITAS (Bisa Di-Scroll)                       */}
         {/* ========================================================= */}
-        <div 
-          className={`absolute inset-0 z-10 transition-opacity duration-1000 ${stage === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        <div
+          className={`transition-opacity duration-1000 w-full ${stage === 2 ? 'opacity-100 relative' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
         >
           {/* PERBAIKAN 1: Border Api dipindah ke wrapper statis agar selalu membingkai container (full) */}
           <div className="fire-border" />
 
           {/* Wrapper Konten Scrollable */}
-          <div 
-            className="card-wrapper custom-scrollbar relative w-full h-full overflow-y-auto p-6 sm:p-8 bg-company8 text-white rounded-2xl"
+          <div
+            className="card-wrapper relative w-full p-6 sm:p-8 bg-company8 text-white rounded-2xl"
             onMouseMove={(e) => {
               if (stage !== 2) return;
               const rect = e.currentTarget.getBoundingClientRect()
               const x = e.clientX - rect.left
-              // PERBAIKAN 2: Penambahan e.currentTarget.scrollTop agar koordinat kursor menyesuaikan ketika discroll
-              const y = e.clientY - rect.top + e.currentTarget.scrollTop 
-              
+              // Koordinat y menyesuaikan otomatis dengan rect.top yang berubah karena parent di-scroll
+              const y = e.clientY - rect.top
+
               const cursorElements = ['cursor-fire-1', 'cursor-fire-2', 'cursor-fire-3', 'cursor-smoke-1', 'cursor-smoke-2']
               cursorElements.forEach(className => {
                 const el = e.currentTarget.querySelector(`.${className}`) as HTMLElement | null
@@ -368,10 +397,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
             {/* Background Salib Company 8 */}
             <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-10 overflow-hidden">
-               <svg viewBox="0 0 200 200" className="w-[150%] h-[150%] max-w-none text-[#ff4500] fill-current animate-[pulse_4s_infinite]">
-                 <path d="M 80 20 L 120 20 L 120 80 L 180 80 L 180 120 L 120 120 L 120 180 L 80 180 L 80 120 L 20 120 L 20 80 L 80 80 Z" />
-               </svg>
-               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay" />
+              <svg viewBox="0 0 200 200" className="w-[150%] h-[150%] max-w-none text-[#ff4500] fill-current animate-[pulse_4s_infinite]">
+                <path d="M 80 20 L 120 20 L 120 80 L 180 80 L 180 120 L 120 120 L 120 180 L 80 180 L 80 120 L 20 120 L 20 80 L 80 80 Z" />
+              </svg>
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay" />
             </div>
 
             {/* Header Identitas */}
@@ -398,10 +427,10 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             </button>
 
             {/* Konten Foto */}
-            <div className="mb-5 overflow-hidden rounded-xl border-2 relative z-20 transition-all duration-500 border-[#333] hover:border-[#ff4500] shadow-lg hover:shadow-[0_0_30px_rgba(255,69,0,0.6)] bg-black/50 group">
+            <div data-popup-item className="mb-5 overflow-hidden rounded-xl border-2 relative z-20 transition-all duration-500 border-[#333] hover:border-[#ff4500] shadow-lg hover:shadow-[0_0_30px_rgba(255,69,0,0.6)] bg-black/50 group">
               <Image src={ProfileImage} alt="Profile Image" className="h-64 sm:h-[22rem] w-full object-cover object-center filter grayscale contrast-125 brightness-90 group-hover:grayscale-0 transition-all duration-700 relative z-0" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 z-0" />
-              
+
               <div className="absolute bottom-4 left-4 z-10">
                 <h2 className="text-2xl sm:text-3xl font-black tracking-wide text-white drop-shadow-[0_2px_10px_#ff4500]">Akhdan Hafiz Anugrah</h2>
                 <p className="text-gray-300 mt-1 text-sm font-semibold tracking-widest">5027251094 - Probolinggo</p>
@@ -410,7 +439,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
 
             {/* Sosial Media & Informasi */}
             <div className="relative z-20 pb-8">
-              <div className="mt-5 flex gap-3">
+              <div data-popup-item className="mt-5 flex gap-3">
                 <div className="hover:shadow-[0_0_15px_#ff4500] rounded-full transition-shadow">
                   <Instagram username="akdn.hpz_" />
                 </div>
@@ -419,7 +448,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-4 text-sm font-semibold sm:grid-cols-2">
+              <div data-popup-item className="mt-6 grid gap-4 text-sm font-semibold sm:grid-cols-2">
                 <div className="border-[#ff4500]/30 bg-black/60 backdrop-blur-md rounded-xl border p-4 hover:border-[#ff4500] transition-colors relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-1 h-full bg-[#ff4500] group-hover:w-full transition-all duration-500 opacity-20" />
                   <p className="text-[#ff4500] text-xs tracking-widest uppercase mb-2">Hobi</p>
@@ -432,7 +461,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
               </div>
 
-              <div className="border-[#ff4500]/40 bg-black/80 backdrop-blur-xl mt-4 rounded-xl border p-4 hover:border-[#ff4500] transition-colors shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+              <div data-popup-item className="border-[#ff4500]/40 bg-black/80 backdrop-blur-xl mt-4 rounded-xl border p-4 hover:border-[#ff4500] transition-colors shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
                 <p className="text-[#ff4500] text-xs font-bold tracking-widest uppercase mb-1">Lagu Favorit</p>
                 <p className="my-2 text-sm font-bold text-white tracking-wide">Afterlife</p>
 
@@ -441,11 +470,12 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
                 </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
