@@ -160,4 +160,4 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   )
 }
 
-      export default MemberPopup
+export default MemberPopup
