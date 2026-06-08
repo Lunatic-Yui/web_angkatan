@@ -88,8 +88,11 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
   }
 
   if (!accessGranted) {
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
+    return createPortal(
+      <div
+        className="fixed inset-0 z-[9999] flex h-[100dvh] max-h-[100dvh] items-center justify-center overflow-hidden px-4"
+        onClick={(event) => event.stopPropagation()}
+      >
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -198,7 +201,8 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
             </div>
           )}
         </div>
-      </div>
+      </div>,
+      document.body
     )
   }
 
@@ -206,7 +210,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
     // PADA BAGIAN INI KAMU BOLEH MENGUBAH STYLE SESUKA HATI KAMU, TAPI JANGAN UBAH STRUKTUR DAN FUNGSI DARI KODE INI AGAR FUNGSI POPUP TETAP BERJALAN DENGAN BAIK
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4"
-      onClick={onClose}
+      onClick={(event) => event.stopPropagation()}
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
@@ -400,7 +404,7 @@ const MemberPopup = ({ isOpen, onClose }: MemberPopupProps) => {
       />
 
       <div
-        className="relative z-[10002] max-h-[calc(100vh-9rem)] w-full max-w-[720px] overflow-y-auto border-2 border-red-600 text-white shadow-xl sm:max-h-[calc(100vh-10rem)]"
+        className="relative z-[10002] max-h-screen w-full max-w-[720px] overflow-y-auto border-2 border-red-600 text-white shadow-xl"
         style={{
           backgroundColor: '#0a0a0a',
           boxShadow: 'inset 8px 0 0 #ff0000, inset -8px 0 0 #ff0000, 0 0 30px rgba(255,0,0,0.3)',
